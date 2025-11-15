@@ -3,12 +3,21 @@ package edu.uga.cs.tradeit;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -16,6 +25,8 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class RegisterFragment extends Fragment {
+    private static final String DEBUG_TAG = "RegisterFragment";
+    private FirebaseAuth mAuth;
 
     public RegisterFragment() {
         // Required empty public constructor
@@ -37,8 +48,84 @@ public class RegisterFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_register, container, false);
     }
 
+
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        view.findViewById(R.id.signinNavButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.container, new SignInFragment())
+                        .commit();
+            }
+        });
+
+        view.findViewById(R.id.registerButton).setOnClickListener(new OnClickFinishRegistration());
+    }
+
+    private class OnClickFinishRegistration implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            EditText emailEditText = getView().findViewById(R.id.emailEditText);
+            EditText passwordEditText = getView().findViewById(R.id.passwordEditText);
+
+            EditText nameEditText = getView().findViewById((R.id.nameEditText));
+
+            String name = nameEditText.getText().toString().trim();
+            if (name.isEmpty()) {
+                // Default username to User
+                name = "User";
+            }
+
+            register(emailEditText.getText().toString(), passwordEditText.getText().toString(), name);
+        }
+    }
+
+
+    public void register(String email, String password, String username) {
+        mAuth = FirebaseAuth.getInstance();
+
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+
+                            Toast.makeText(getContext(),
+                                    "Registered user: " + email,
+                                    Toast.LENGTH_SHORT).show();
+
+                            Log.d(DEBUG_TAG, "createUserWithEmail: success");
+
+                            FirebaseUser user = mAuth.getCurrentUser();
+
+                            UserProfileChangeRequest updateProfile = new UserProfileChangeRequest.Builder().setDisplayName(username).build();
+
+                            // Update their display name to the name we let them choose
+                            user.updateProfile(updateProfile).addOnCompleteListener(job -> {
+                                if (job.isSuccessful()) {
+
+                                    Log.d(DEBUG_TAG, "Updated username");
+                                } else {
+                                    Log.d(DEBUG_TAG, "Failed to update username");
+                                }
+
+                                // Navigate to auth screen
+                                getParentFragmentManager().beginTransaction()
+                                        .replace(R.id.container, new AuthScreenFragment())
+                                        .commit();
+                            });
+
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(DEBUG_TAG, "createUserWithEmail: failure", task.getException());
+                            Toast.makeText(getContext(), "Registration failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
     }
 }

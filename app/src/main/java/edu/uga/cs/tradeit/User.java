@@ -1,10 +1,17 @@
 package edu.uga.cs.tradeit;
 
+//
+
+
 /**
  * This class represents a single user(POJO), including the id, name,
  * email, and password, and some comments.
  * The id is -1 if the object has not been persisted in the database yet, and
  * the db table's primary key value, if it has been persisted.
+ *
+ * Todo maybe remove this
+ * Dunno if we need this, seems like something firebase handles
+ * See {@link AuthScreenFragment} for example user usage from firebase
  */
 public class User {
     private int id;
