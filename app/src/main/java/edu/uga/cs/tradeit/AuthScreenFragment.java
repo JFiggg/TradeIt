@@ -64,6 +64,8 @@ public class AuthScreenFragment extends Fragment {
 
         // Logout button click listener
         view.findViewById(R.id.lgoutButton).setOnClickListener(new OnClickSignOut());
+
+        view.findViewById(R.id.categoryButton).setOnClickListener(new OnClickCategory());
     }
 
     private class OnClickSignOut implements View.OnClickListener {
@@ -74,6 +76,15 @@ public class AuthScreenFragment extends Fragment {
             // Navigate back to sign in screen
             getParentFragmentManager().beginTransaction()
                     .replace(R.id.container, new SignInFragment())
+                    .commit();
+        }
+    }
+
+    private class OnClickCategory implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            getParentFragmentManager().beginTransaction()
+                    .replace(R.id.container, new ReviewCategoryFragment())
                     .commit();
         }
     }

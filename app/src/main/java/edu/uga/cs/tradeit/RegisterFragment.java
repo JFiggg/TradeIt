@@ -16,8 +16,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -65,10 +69,32 @@ public class RegisterFragment extends Fragment {
         view.findViewById(R.id.registerButton).setOnClickListener(new OnClickFinishRegistration());
     }
 
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
+    public static boolean validate(String emailStr) {
+        Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
+        return matcher.matches();
+    }
+
     private class OnClickFinishRegistration implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             EditText emailEditText = getView().findViewById(R.id.emailEditText);
+            String emailText = emailEditText.getText().toString();
+            boolean validEmail = validate(emailText);
+
+            if (!validEmail) {
+                Toast.makeText(getContext(), "Invalid email format",
+                        Toast.LENGTH_SHORT).show();
+
+                return;
+            }
+
+
+
+            // here show error if email malformed
+
             EditText passwordEditText = getView().findViewById(R.id.passwordEditText);
 
             EditText nameEditText = getView().findViewById((R.id.nameEditText));
@@ -79,7 +105,7 @@ public class RegisterFragment extends Fragment {
                 name = "User";
             }
 
-            register(emailEditText.getText().toString(), passwordEditText.getText().toString(), name);
+            register(emailText, passwordEditText.getText().toString(), name);
         }
     }
 
@@ -119,10 +145,16 @@ public class RegisterFragment extends Fragment {
                             });
 
                         } else {
-                            // If sign in fails, display a message to the user.
-                            Log.w(DEBUG_TAG, "createUserWithEmail: failure", task.getException());
-                            Toast.makeText(getContext(), "Registration failed.",
-                                    Toast.LENGTH_SHORT).show();
+                            // Show a specific error message if email is already taken
+                            if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                Toast.makeText(getContext(), "This email is already in use!",
+                                        Toast.LENGTH_LONG).show();
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w(DEBUG_TAG, "createUserWithEmail: failure", task.getException());
+                                Toast.makeText(getContext(), "Registration failed.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
                         }
                     }
                 });

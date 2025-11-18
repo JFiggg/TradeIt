@@ -100,7 +100,7 @@ public class SignInFragment extends Fragment {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.d(DEBUG_TAG, "sign in failure", task.getException());
-                            Toast.makeText(getContext(), "Authentication failed.",
+                            Toast.makeText(getContext(), "Invalid email or password.",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
