@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,24 +13,26 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import edu.uga.cs.tradeit.auth.SignInFragment;
+
 /**
  * Simple placeholder screen to indicate the user is authenticated
  */
-public class AuthScreenFragment extends Fragment {
+public class ProfileFragment extends Fragment {
     private FirebaseAuth mAuth;
 
-    public AuthScreenFragment() {
+    public ProfileFragment() {
     }
 
-    public static AuthScreenFragment newInstance() {
-        return new AuthScreenFragment();
+    public static ProfileFragment newInstance() {
+        return new ProfileFragment();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.auth_screen_test, container, false);
+        return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
     @Override
@@ -45,10 +46,13 @@ public class AuthScreenFragment extends Fragment {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         // Text view to show user's name
         TextView nameTextView = view.findViewById(R.id.nameTextView);
+        TextView emailTextView = view.findViewById(R.id.emailTextView);
 
         if (currentUser != null) {
             // If they set a display name show it on the screen
             String displayName = currentUser.getDisplayName();
+            String emailDisplay = currentUser.getEmail();
+            emailTextView.setText(emailDisplay);
             if (displayName != null && !displayName.isEmpty()) {
                 nameTextView.setText("Hello, " + displayName);
             } else {

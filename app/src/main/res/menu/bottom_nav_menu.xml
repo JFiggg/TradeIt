@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/browse"
+        android:icon="@drawable/baseline_search_24"
+        android:title="Browse" />
+    <item
+        android:id="@+id/post"
+        android:icon="@drawable/outline_add_24"
+        android:title="Post" />
+    <item
+        android:id="@+id/profile"
+        android:icon="@drawable/baseline_person_24"
+        android:title="Profile" />
+</menu>

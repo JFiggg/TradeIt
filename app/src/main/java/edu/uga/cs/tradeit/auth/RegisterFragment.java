@@ -1,4 +1,4 @@
-package edu.uga.cs.tradeit;
+package edu.uga.cs.tradeit.auth;
 
 import android.os.Bundle;
 
@@ -22,6 +22,9 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import edu.uga.cs.tradeit.ProfileFragment;
+import edu.uga.cs.tradeit.R;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -92,7 +95,6 @@ public class RegisterFragment extends Fragment {
             }
 
 
-
             // here show error if email malformed
 
             EditText passwordEditText = getView().findViewById(R.id.passwordEditText);
@@ -140,7 +142,7 @@ public class RegisterFragment extends Fragment {
 
                                 // Navigate to auth screen
                                 getParentFragmentManager().beginTransaction()
-                                        .replace(R.id.container, new AuthScreenFragment())
+                                        .replace(R.id.container, new ProfileFragment())
                                         .commit();
                             });
 

@@ -1,4 +1,4 @@
-package edu.uga.cs.tradeit;
+package edu.uga.cs.tradeit.auth;
 
 import android.os.Bundle;
 
@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.regex.Pattern;
+
+import edu.uga.cs.tradeit.ProfileFragment;
+import edu.uga.cs.tradeit.R;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link SignInFragment#newInstance} factory method to
@@ -26,11 +32,10 @@ public class SignInFragment extends Fragment {
 
     private static final String DEBUG_TAG = "SignInFragment";
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
     private FirebaseAuth mAuth;
+
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     public SignInFragment() {
         // Required empty public constructor
@@ -78,13 +83,28 @@ public class SignInFragment extends Fragment {
             EditText emailEditText = getView().findViewById(R.id.emailEditText);
             EditText passwordEditText = getView().findViewById(R.id.passwordEditText);
 
-            // TODO better input validation
 
             signIn(emailEditText.getText().toString(), passwordEditText.getText().toString());
         }
     }
 
     public void signIn(String email, String password) {
+
+        if (email == null || email.trim().isEmpty()) {
+            Toast.makeText(getContext(), "Email cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (password == null || password.trim().isEmpty()) {
+            Toast.makeText(getContext(), "Password cannot be empty", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(getContext(), "Invalid email format", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         mAuth = FirebaseAuth.getInstance();
 
         mAuth.signInWithEmailAndPassword(email, password)
@@ -95,7 +115,7 @@ public class SignInFragment extends Fragment {
                             Log.d(DEBUG_TAG, "sign in success");
 
                             getParentFragmentManager().beginTransaction()
-                                    .replace(R.id.container, new AuthScreenFragment())
+                                    .replace(R.id.container, new ProfileFragment())
                                     .commit();
                         } else {
                             // If sign in fails, display a message to the user.
