@@ -1,5 +1,6 @@
 package edu.uga.cs.tradeit.auth;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -20,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.regex.Pattern;
 
+import edu.uga.cs.tradeit.HomeActivity;
 import edu.uga.cs.tradeit.ProfileFragment;
 import edu.uga.cs.tradeit.R;
 
@@ -114,9 +116,9 @@ public class SignInFragment extends Fragment {
                         if (task.isSuccessful()) {
                             Log.d(DEBUG_TAG, "sign in success");
 
-                            getParentFragmentManager().beginTransaction()
-                                    .replace(R.id.container, new ProfileFragment())
-                                    .commit();
+                            Intent intent = new Intent(requireContext(), HomeActivity.class);
+                            startActivity(intent);
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.d(DEBUG_TAG, "sign in failure", task.getException());

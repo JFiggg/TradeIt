@@ -18,7 +18,7 @@ public class MainVPAdapter extends FragmentStateAdapter {
             case 0:
                 return new BrowseFragment();
             case 1:
-                return new AddItemFragment();
+                return new PostFragment();
             case 2:
                 return new ProfileFragment();
             default:

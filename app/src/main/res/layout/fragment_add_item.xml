@@ -5,10 +5,9 @@
     android:layout_height="match_parent"
     tools:context=".AddItemFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainerView2"
+        android:name="edu.uga.cs.tradeit.PostFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Add item fragment" />
-
+        android:layout_height="match_parent" />
 </FrameLayout>

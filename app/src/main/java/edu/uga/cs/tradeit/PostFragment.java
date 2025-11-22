@@ -30,12 +30,12 @@ import java.util.List;
 /**
  * Placeholder screen to view all categories
  */
-public class ReviewCategoryFragment extends Fragment implements AddCategoryDialogFragment.AddCategoryDialogListener {
+public class PostFragment extends Fragment implements CategoryDialogFragment.AddCategoryDialogListener {
 
     private static final String DEBUG_TAG = "ReviewCategoryFragment";
 
     private RecyclerView recyclerView;
-    private CategoryRecyclerAdapter adapter;
+    private CategoryPostRecyclerAdapter adapter;
 
     private Button addCategoryButton;
     private List<Category> categoryList;
@@ -52,14 +52,14 @@ public class ReviewCategoryFragment extends Fragment implements AddCategoryDialo
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         categoryList = new ArrayList<>();
-        adapter = new CategoryRecyclerAdapter(categoryList, getContext());
+        adapter = new CategoryPostRecyclerAdapter(categoryList, getContext(), this);
         recyclerView.setAdapter(adapter);
 
         addCategoryButton = view.findViewById(R.id.addCategoryButton);
         addCategoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AddCategoryDialogFragment dialog = new AddCategoryDialogFragment();
+                CategoryDialogFragment dialog = new CategoryDialogFragment();
                 dialog.show(getChildFragmentManager(), "AddCategoryDialog");
             }
         });
@@ -102,8 +102,6 @@ public class ReviewCategoryFragment extends Fragment implements AddCategoryDialo
         return view;
     }
 
-
-
     @Override
     public void addCategory(Category category) {
         database = FirebaseDatabase.getInstance();
@@ -128,6 +126,42 @@ public class ReviewCategoryFragment extends Fragment implements AddCategoryDialo
                 .addOnFailureListener(e -> {
                     Log.e(DEBUG_TAG, "Error adding category: " + e.getMessage());
                     Toast.makeText(getContext(), "Failed to add category", Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    @Override
+    public void updateCategory(Category category) {
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference ref = db.getReference("categories");
+
+        if (category.getKey() == null) {
+            Toast.makeText(getContext(), "Error: category has no key", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Update only the name + timestamp
+        ref.child(category.getKey()).child("name").setValue(category.getName());
+        ref.child(category.getKey()).child("createdAt").setValue(System.currentTimeMillis());
+
+        Toast.makeText(getContext(), "Category updated", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void deleteCategory(Category category) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference categoriesRef = database.getReference("categories");
+
+        if (category.getKey() == null) {
+            Toast.makeText(getContext(), "Error: Category key missing!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        categoriesRef.child(category.getKey()).removeValue()
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(getContext(), "Category deleted", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(getContext(), "Failed to delete category", Toast.LENGTH_SHORT).show();
                 });
     }
 }

@@ -1,5 +1,6 @@
 package edu.uga.cs.tradeit.auth;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -23,6 +24,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.uga.cs.tradeit.HomeActivity;
 import edu.uga.cs.tradeit.ProfileFragment;
 import edu.uga.cs.tradeit.R;
 
@@ -141,9 +143,8 @@ public class RegisterFragment extends Fragment {
                                 }
 
                                 // Navigate to auth screen
-                                getParentFragmentManager().beginTransaction()
-                                        .replace(R.id.container, new ProfileFragment())
-                                        .commit();
+                                Intent intent = new Intent(requireContext(), HomeActivity.class);
+                                startActivity(intent);
                             });
 
                         } else {

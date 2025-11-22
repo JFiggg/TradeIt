@@ -1,5 +1,6 @@
 package edu.uga.cs.tradeit;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import edu.uga.cs.tradeit.auth.AuthActivity;
 import edu.uga.cs.tradeit.auth.SignInFragment;
 
 /**
@@ -47,6 +49,7 @@ public class ProfileFragment extends Fragment {
         // Text view to show user's name
         TextView nameTextView = view.findViewById(R.id.nameTextView);
         TextView emailTextView = view.findViewById(R.id.emailTextView);
+        TextView currentNameTextView = view.findViewById(R.id.currentNameTextView);
 
         if (currentUser != null) {
             // If they set a display name show it on the screen
@@ -55,21 +58,22 @@ public class ProfileFragment extends Fragment {
             emailTextView.setText(emailDisplay);
             if (displayName != null && !displayName.isEmpty()) {
                 nameTextView.setText("Hello, " + displayName);
+                currentNameTextView.setText(displayName);
             } else {
                 // Fallback
                 String email = currentUser.getEmail();
                 if (email != null) {
                     nameTextView.setText("Hello, " + email);
+                    currentNameTextView.setText(email);
                 } else {
                     nameTextView.setText("Hello, User");
+                    currentNameTextView.setText("User");
                 }
             }
         }
 
         // Logout button click listener
         view.findViewById(R.id.lgoutButton).setOnClickListener(new OnClickSignOut());
-
-        view.findViewById(R.id.categoryButton).setOnClickListener(new OnClickCategory());
     }
 
     private class OnClickSignOut implements View.OnClickListener {
@@ -78,18 +82,8 @@ public class ProfileFragment extends Fragment {
             mAuth.signOut();
 
             // Navigate back to sign in screen
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.container, new SignInFragment())
-                    .commit();
-        }
-    }
-
-    private class OnClickCategory implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            getParentFragmentManager().beginTransaction()
-                    .replace(R.id.container, new ReviewCategoryFragment())
-                    .commit();
+            Intent intent = new Intent(requireContext(), AuthActivity.class);
+            startActivity(intent);
         }
     }
 }

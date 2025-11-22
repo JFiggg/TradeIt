@@ -2,11 +2,31 @@ package edu.uga.cs.tradeit;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -15,50 +35,61 @@ import android.view.ViewGroup;
  */
 public class BrowseFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String DEBUG_TAG = "ReviewCategoryFragment";
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private RecyclerView recyclerView;
+    private CategoryBrowseRecyclerAdapter adapter;
+    private List<Category> categoryList;
+    private FirebaseDatabase database;
 
-    public BrowseFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment BrowseFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static BrowseFragment newInstance(String param1, String param2) {
-        BrowseFragment fragment = new BrowseFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_review_category, container, false);
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_browse, container, false);
+        recyclerView = view.findViewById(R.id.categoriesRecyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        categoryList = new ArrayList<>();
+        adapter = new CategoryBrowseRecyclerAdapter(categoryList, getContext());
+        recyclerView.setAdapter(adapter);
+
+        database = FirebaseDatabase.getInstance();
+        DatabaseReference categoriesRef = database.getReference("categories");
+
+        categoriesRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                categoryList.clear();
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Category category = snapshot.getValue(Category.class);
+                    if (category != null) {
+                        category.setKey(snapshot.getKey());
+                        categoryList.add(category);
+                        Log.d(DEBUG_TAG, "Loaded categories: " + category.getName());
+                    }
+                }
+
+                // Sort categories alphabetically by name
+                Collections.sort(categoryList, new Comparator<Category>() {
+                    @Override
+                    public int compare(Category c1, Category c2) {
+                        return c1.getName().compareToIgnoreCase(c2.getName());
+                    }
+                });
+
+                adapter.notifyDataSetChanged();
+                Log.d(DEBUG_TAG, "Category count: " + categoryList.size());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(DEBUG_TAG, "Error: failed to load categories: " + databaseError.getMessage());
+            }
+        });
+
+        return view;
     }
 }

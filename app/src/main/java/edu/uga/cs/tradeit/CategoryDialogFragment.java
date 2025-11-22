@@ -12,11 +12,14 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-public class AddCategoryDialogFragment extends DialogFragment {
+public class CategoryDialogFragment extends DialogFragment {
     private EditText categoryNameEditText;
+    private Category categoryToEdit = null;
 
     public interface AddCategoryDialogListener {
         void addCategory(Category category);
+        void updateCategory(Category category);
+        void deleteCategory(Category category);
     }
 
     @Override
@@ -32,7 +35,14 @@ public class AddCategoryDialogFragment extends DialogFragment {
         // Set its view (inflated above).
         builder.setView(layout);
 
-        builder.setTitle( "New Category" );
+        if (categoryToEdit != null) {
+            // Edit mode
+            builder.setTitle("Edit Category");
+            categoryNameEditText.setText(categoryToEdit.getName());
+        } else {
+            // Add mode
+            builder.setTitle("New Category");
+        }
 
         // Provide the negative button listener
         builder.setNegativeButton( android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -56,14 +66,24 @@ public class AddCategoryDialogFragment extends DialogFragment {
         public void onClick(DialogInterface dialog, int which) {
             String categoryName = categoryNameEditText.getText().toString();
 
-            Category category = new Category(categoryName);
-
             // Get the listener from the parent fragment instead of activity
             AddCategoryDialogListener listener = (AddCategoryDialogListener) getParentFragment();
 
-            listener.addCategory(category);
+            if (categoryToEdit == null) {
+                // ADD MODE
+                Category category = new Category(categoryName);
+                listener.addCategory(category);
+            } else {
+                // UPDATE MODE
+                categoryToEdit.setName(categoryName);
+                listener.updateCategory(categoryToEdit);   // you'll add this to the interface
+            }
 
             dismiss();
         }
+    }
+
+    public void setCategoryToEdit(Category category) {
+        this.categoryToEdit = category;
     }
 }
