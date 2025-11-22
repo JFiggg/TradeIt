@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import edu.uga.cs.tradeit.databinding.ActivityHomeBinding;
@@ -71,16 +72,65 @@ public class HomeActivity extends AppCompatActivity {
         // On the navbar without creating a whole new activity
         // Feel free to change it
 
+        // Listen to back stack changes to automatically manage overlay visibility
+        getSupportFragmentManager().addOnBackStackChangedListener(() -> {
+            int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
+            if (backStackCount > 0) {
+                // There are fragments in the back stack, show overlay
+                binding.fragmentOverlayContainer.setVisibility(View.VISIBLE);
+                binding.overlayToolbar.setVisibility(View.VISIBLE);
+
+                // Restore title if fragment is BrowseItemFragment
+                Fragment currentFragment = getSupportFragmentManager()
+                        .findFragmentById(R.id.fragmentOverlayContainer);
+                if (currentFragment instanceof BrowseItemFragment) {
+                    // Get category name from fragment arguments
+                    Bundle args = currentFragment.getArguments();
+                    if (args != null) {
+                        String categoryName = args.getString("category_name");
+                        if (categoryName != null) {
+                            binding.overlayTitle.setText(categoryName);
+                        }
+                    }
+                }
+            } else {
+                // No fragments in back stack, hide overlay
+                binding.fragmentOverlayContainer.setVisibility(View.GONE);
+                binding.overlayToolbar.setVisibility(View.GONE);
+            }
+        });
+
+        // Handle configuration changes (rotation) - restore overlay state
+        if (savedInstanceState != null) {
+            // FragmentManager will restore fragments automatically
+            // Just need to make sure overlay visibility is correct
+            getSupportFragmentManager().executePendingTransactions();
+            int backStackCount = getSupportFragmentManager().getBackStackEntryCount();
+            if (backStackCount > 0) {
+                binding.fragmentOverlayContainer.setVisibility(View.VISIBLE);
+                binding.overlayToolbar.setVisibility(View.VISIBLE);
+
+                // Restore title
+                Fragment currentFragment = getSupportFragmentManager()
+                        .findFragmentById(R.id.fragmentOverlayContainer);
+                if (currentFragment instanceof BrowseItemFragment) {
+                    Bundle args = currentFragment.getArguments();
+                    if (args != null) {
+                        String categoryName = args.getString("category_name");
+                        if (categoryName != null) {
+                            binding.overlayTitle.setText(categoryName);
+                        }
+                    }
+                }
+            }
+        }
+
         // Set up global overlay back button
         binding.overlayBackButton.setOnClickListener(v -> {
-            // Pop the back stack
+            // Pop the back stack (listener will handle hiding overlay)
             if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                 getSupportFragmentManager().popBackStack();
             }
-
-            // Hide overlay and toolbar
-            binding.fragmentOverlayContainer.setVisibility(View.GONE);
-            binding.overlayToolbar.setVisibility(View.GONE);
         });
 
         // Handle system back button for overlay
@@ -89,14 +139,10 @@ public class HomeActivity extends AppCompatActivity {
             public void handleOnBackPressed() {
                 // Check if overlay is visible
                 if (binding.fragmentOverlayContainer.getVisibility() == View.VISIBLE) {
-                    // Pop the back stack
+                    // Pop the back stack (listener will handle hiding overlay)
                     if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
                         getSupportFragmentManager().popBackStack();
                     }
-
-                    // Hide overlay and toolbar
-                    binding.fragmentOverlayContainer.setVisibility(View.GONE);
-                    binding.overlayToolbar.setVisibility(View.GONE);
                 } else {
                     // Default back button behavior
                     setEnabled(false);
