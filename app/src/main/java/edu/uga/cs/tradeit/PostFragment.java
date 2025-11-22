@@ -30,7 +30,7 @@ import java.util.List;
 /**
  * Placeholder screen to view all categories
  */
-public class PostFragment extends Fragment implements CategoryDialogFragment.AddCategoryDialogListener {
+public class PostFragment extends Fragment implements CategoryDialogFragment.AddCategoryDialogListener, ItemDialogFragment.ItemDialogListener {
 
     private static final String DEBUG_TAG = "ReviewCategoryFragment";
 
@@ -107,9 +107,10 @@ public class PostFragment extends Fragment implements CategoryDialogFragment.Add
         database = FirebaseDatabase.getInstance();
         DatabaseReference categoriesRef = database.getReference("categories");
 
-        DatabaseReference newCategoryRef = categoriesRef.push();
-
-        category.setKey(newCategoryRef.getKey());
+        // Use the category name as the key to prevent duplicates
+        String categoryName = category.getName();
+        category.setKey(categoryName);
+        DatabaseReference newCategoryRef = categoriesRef.child(categoryName);
 
         // Set owner and timestamp
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -125,7 +126,7 @@ public class PostFragment extends Fragment implements CategoryDialogFragment.Add
                 })
                 .addOnFailureListener(e -> {
                     Log.e(DEBUG_TAG, "Error adding category: " + e.getMessage());
-                    Toast.makeText(getContext(), "Failed to add category", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Failed to add category: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -134,16 +135,51 @@ public class PostFragment extends Fragment implements CategoryDialogFragment.Add
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference ref = db.getReference("categories");
 
-        if (category.getKey() == null) {
+        /*
+        In Database categories stored as
+        categories -> key -> categoryObject
+         */
+        String oldKey = category.getKey();
+        String newName = category.getName();
+
+        if (oldKey == null) {
             Toast.makeText(getContext(), "Error: category has no key", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Update only the name + timestamp
-        ref.child(category.getKey()).child("name").setValue(category.getName());
-        ref.child(category.getKey()).child("createdAt").setValue(System.currentTimeMillis());
+        // If name changed, we need to delete old and create new (since name is the key)
+        if (!oldKey.equals(newName)) {
+            // First, get the old category data to preserve ownerKey
+            ref.child(oldKey).get().addOnSuccessListener(snapshot -> {
+                if (snapshot.exists()) {
+                    Category oldCategory = snapshot.getValue(Category.class);
+                    if (oldCategory != null) {
+                        // Delete old category
+                        ref.child(oldKey).removeValue();
 
-        Toast.makeText(getContext(), "Category updated", Toast.LENGTH_SHORT).show();
+                        // Create new category with new name as key
+                        category.setKey(newName);
+                        // Same owner
+                        category.setOwnerKey(oldCategory.getOwnerKey());
+                        // Created at should remain unchanged
+                        category.setCreatedAt(oldCategory.getCreatedAt());
+
+                        // Update the category map with the new category
+                        ref.child(newName).setValue(category)
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(getContext(), "Category renamed", Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> {
+                                    Toast.makeText(getContext(), "Failed to rename: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                });
+                    }
+                }
+            });
+        } else {
+            // Name unchanged, just update timestamp
+            ref.child(oldKey).child("createdAt").setValue(System.currentTimeMillis());
+            Toast.makeText(getContext(), "Category updated", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -164,4 +200,39 @@ public class PostFragment extends Fragment implements CategoryDialogFragment.Add
                     Toast.makeText(getContext(), "Failed to delete category", Toast.LENGTH_SHORT).show();
                 });
     }
+
+    @Override
+    public void addItem(Item item) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference categoriesRef = database.getReference("categories");
+
+        String categoryName = item.getCategoryName();
+        if (categoryName == null || categoryName.isEmpty()) {
+            Toast.makeText(getContext(), "Error: No category selected on item!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        DatabaseReference itemsRef = categoriesRef.child(categoryName).child("items");
+        DatabaseReference newItemRef = itemsRef.push();
+
+        item.setKey(newItemRef.getKey());
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            item.setOwnerKey(currentUser.getUid());
+        }
+        item.setCreatedAt(System.currentTimeMillis());
+
+        newItemRef.setValue(item)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(DEBUG_TAG, "Item added: " + item.getName());
+                    Toast.makeText(getContext(), "Item added: " + item.getName(), Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(DEBUG_TAG, "Error adding item: " + e.getMessage());
+                    Toast.makeText(getContext(), "Failed to add item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+
 }

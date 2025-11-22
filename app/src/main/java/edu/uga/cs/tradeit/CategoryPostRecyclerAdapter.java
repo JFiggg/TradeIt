@@ -40,6 +40,7 @@ public class CategoryPostRecyclerAdapter extends RecyclerView.Adapter<CategoryPo
         TextView categoryCreatedAtTextView;
         Button editButton;
         Button deleteButton;
+        Button addItemButton;
 
         public CategoryHolder(View view) {
             super(view);
@@ -49,6 +50,7 @@ public class CategoryPostRecyclerAdapter extends RecyclerView.Adapter<CategoryPo
             categoryCreatedAtTextView = view.findViewById(R.id.categoryCreatedAtTextView);
             editButton = view.findViewById(R.id.editButton);
             deleteButton = view.findViewById(R.id.deleteButton);
+            addItemButton = view.findViewById(R.id.addItemButton);
         }
     }
     @NonNull
@@ -119,6 +121,13 @@ public class CategoryPostRecyclerAdapter extends RecyclerView.Adapter<CategoryPo
                     })
                     .setNegativeButton("Cancel", null)
                     .show();
+        });
+
+
+        holder.addItemButton.setOnClickListener(v -> {
+            ItemDialogFragment dialog = new ItemDialogFragment();
+            dialog.setCategory(category);
+            dialog.show(parentFragment.getChildFragmentManager(), "AddItemDialog");
         });
 
     }

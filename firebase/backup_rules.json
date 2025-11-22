@@ -1,0 +1,32 @@
+{
+  "rules": {
+    "categories": {
+      // Any authenticated user can read all categories
+      ".read": "auth != null",
+
+      "$categoryName": {
+        // Read access for authenticated users
+        ".read": "auth != null",
+
+        // Allow all authenticated writes (field validation handles security)
+        ".write": "auth != null",
+
+        // Enforce that ownerKey cannot be changed after creation
+        "ownerKey": {
+          ".validate": "(newData.val() === data.val()) || (newData.val() === auth.uid && !data.exists())"
+        },
+
+        // Validate createdAt cannot be changed after creation
+        "createdAt": {
+          ".validate": "(newData.val() === data.val()) || (newData.isNumber() && !data.exists())"
+        },
+
+        // Items nested under categories
+        "items": {
+          ".read": "auth != null",
+          ".write": "auth != null"
+        }
+      }
+    }
+  }
+}
