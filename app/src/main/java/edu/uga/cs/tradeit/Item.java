@@ -21,7 +21,7 @@ public class Item {
     public Item() {
     }
 
-    public Item(String name, double price, boolean isFree, String categoryName) {
+    public Item(String name, Double price, boolean isFree, String categoryName) {
         this.name = name;
         this.price = price;
         this.isFree = isFree;
@@ -29,6 +29,10 @@ public class Item {
 
         if (isFree) {
             this.price = null;
+        }
+
+        if (this.price == null) {
+            this.price = 0.0;
         }
     }
 
