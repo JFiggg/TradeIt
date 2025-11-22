@@ -48,11 +48,17 @@ public class BrowseFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_review_category, container, false);
 
+        // Hide the Add Category button in browse view
+        Button addCategoryButton = view.findViewById(R.id.addCategoryButton);
+        if (addCategoryButton != null) {
+            addCategoryButton.setVisibility(View.GONE);
+        }
+
         recyclerView = view.findViewById(R.id.categoriesRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         categoryList = new ArrayList<>();
-        adapter = new CategoryBrowseRecyclerAdapter(categoryList, getContext());
+        adapter = new CategoryBrowseRecyclerAdapter(categoryList, getContext(), this);
         recyclerView.setAdapter(adapter);
 
         database = FirebaseDatabase.getInstance();
@@ -66,6 +72,7 @@ public class BrowseFragment extends Fragment {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Category category = snapshot.getValue(Category.class);
                     if (category != null) {
+                        // Set both key and name from snapshot key (they're the same now)
                         category.setKey(snapshot.getKey());
                         categoryList.add(category);
                         Log.d(DEBUG_TAG, "Loaded categories: " + category.getName());

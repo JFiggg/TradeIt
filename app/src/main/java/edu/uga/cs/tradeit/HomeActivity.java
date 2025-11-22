@@ -1,8 +1,10 @@
 package edu.uga.cs.tradeit;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -61,6 +63,44 @@ public class HomeActivity extends AppCompatActivity {
                     case 2:
                         binding.bottomNavigationView.setSelectedItemId(R.id.profile);
                         break;
+                }
+            }
+        });
+
+        // I had to look this up because I couldn't figure out how to replace the fragments
+        // On the navbar without creating a whole new activity
+        // Feel free to change it
+
+        // Set up global overlay back button
+        binding.overlayBackButton.setOnClickListener(v -> {
+            // Pop the back stack
+            if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                getSupportFragmentManager().popBackStack();
+            }
+
+            // Hide overlay and toolbar
+            binding.fragmentOverlayContainer.setVisibility(View.GONE);
+            binding.overlayToolbar.setVisibility(View.GONE);
+        });
+
+        // Handle system back button for overlay
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // Check if overlay is visible
+                if (binding.fragmentOverlayContainer.getVisibility() == View.VISIBLE) {
+                    // Pop the back stack
+                    if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                        getSupportFragmentManager().popBackStack();
+                    }
+
+                    // Hide overlay and toolbar
+                    binding.fragmentOverlayContainer.setVisibility(View.GONE);
+                    binding.overlayToolbar.setVisibility(View.GONE);
+                } else {
+                    // Default back button behavior
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
                 }
             }
         });

@@ -2,37 +2,42 @@ package edu.uga.cs.tradeit;
 
 import com.google.firebase.database.Exclude;
 
-public class Category
-{
+public class Item {
     @Exclude  // Exclude from Firebase - key is derived from node key
     private String key;
 
-    @Exclude  // Exclude from Firebase - name is used as the key
     private String name;
 
     private String ownerKey;
 
+    private String categoryName;
+
     private long createdAt;
 
-    public Category() {
-        this.key = null;
-        this.name = null;
-        this.ownerKey = null;
-        this.createdAt = 0;
+    private Double price;
+
+    private boolean isFree;
+
+    public Item() {
     }
 
-    public Category(String name) {
-        this.key = null;
+    public Item(String name, double price, boolean isFree, String categoryName) {
         this.name = name;
-        this.ownerKey = null;
-        this.createdAt = 0;
+        this.price = price;
+        this.isFree = isFree;
+        this.categoryName = categoryName;
+
+        if (isFree) {
+            this.price = null;
+        }
     }
 
-    public Category(String name, String ownerKey, long createdAt) {
-        this.key = null;
-        this.name = name;
-        this.ownerKey = ownerKey;
-        this.createdAt = createdAt;
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     public String getKey() {
@@ -41,7 +46,6 @@ public class Category
 
     public void setKey(String key) {
         this.key = key;
-        this.name = key;
     }
 
     public String getName() {
@@ -66,5 +70,21 @@ public class Category
 
     public void setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public boolean isFree() {
+        return isFree;
+    }
+
+    public void setFree(boolean free) {
+        isFree = free;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }
