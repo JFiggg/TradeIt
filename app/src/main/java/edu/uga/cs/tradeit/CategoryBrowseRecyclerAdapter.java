@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.SimpleDateFormat;
@@ -18,10 +20,12 @@ import java.util.Locale;
 public class CategoryBrowseRecyclerAdapter extends RecyclerView.Adapter<CategoryBrowseRecyclerAdapter.CategoryHolder> {
     private List<Category> categoryList;
     private Context context;
+    private Fragment parentFragment;
 
-    public CategoryBrowseRecyclerAdapter(List<Category> categoryList, Context context ) {
+    public CategoryBrowseRecyclerAdapter(List<Category> categoryList, Context context, Fragment parentFragment) {
         this.categoryList = categoryList;
         this.context = context;
+        this.parentFragment = parentFragment;
     }
 
     class CategoryHolder extends RecyclerView.ViewHolder {
@@ -29,12 +33,13 @@ public class CategoryBrowseRecyclerAdapter extends RecyclerView.Adapter<Category
         TextView categoryOwnerTextView;
         TextView categoryCreatedAtTextView;
         Button browseButton;
-
+        TextView categoryItemCountTextView;
         public CategoryHolder(View view) {
             super(view);
 
             categoryNameTextView = view.findViewById(R.id.categoryNameTextView);
             categoryOwnerTextView = view.findViewById(R.id.categoryOwnerTextView);
+            categoryItemCountTextView = view.findViewById(R.id.categoryItemCount);
             categoryCreatedAtTextView = view.findViewById(R.id.categoryCreatedAtTextView);
             browseButton = view.findViewById(R.id.browseButton);
         }
@@ -57,6 +62,10 @@ public class CategoryBrowseRecyclerAdapter extends RecyclerView.Adapter<Category
         String ownerKey = category.getOwnerKey();
         long createdAt = category.getCreatedAt();
 
+        if (category.getItems() != null) {
+            holder.categoryItemCountTextView.setText("Item Count: " + category.getItems().size());
+        }
+
         holder.categoryNameTextView.setText( category.getName());
 
         // Set owner text
@@ -75,11 +84,34 @@ public class CategoryBrowseRecyclerAdapter extends RecyclerView.Adapter<Category
             holder.categoryCreatedAtTextView.setText("Created: Unknown");
         }
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        // This will show an overlay fragment over the navbar fragments
+        // I had to look this up, not sure if its best solution ATM
+        holder.browseButton.setOnClickListener(v -> {
+            // Navigate to BrowseItemFragment using activity's fragment manager
+            BrowseItemFragment browseItemFragment = BrowseItemFragment.newInstance(category.getName());
+            AppCompatActivity activity = (AppCompatActivity) holder.itemView.getContext();
 
+            // Show the overlay container and toolbar
+            View overlayContainer = activity.findViewById(R.id.fragmentOverlayContainer);
+            View overlayToolbar = activity.findViewById(R.id.overlayToolbar);
+            TextView overlayTitle = activity.findViewById(R.id.overlayTitle);
+
+            if (overlayContainer != null) {
+                overlayContainer.setVisibility(View.VISIBLE);
             }
+            if (overlayToolbar != null) {
+                overlayToolbar.setVisibility(View.VISIBLE);
+            }
+            if (overlayTitle != null) {
+                overlayTitle.setText(category.getName());
+            }
+
+            // Add fragment to overlay container
+            activity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragmentOverlayContainer, browseItemFragment)
+                    .addToBackStack(null)
+                    .commit();
         });
 
     }

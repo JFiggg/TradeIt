@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -50,6 +52,7 @@ public class ProfileFragment extends Fragment {
         TextView nameTextView = view.findViewById(R.id.nameTextView);
         TextView emailTextView = view.findViewById(R.id.emailTextView);
         TextView currentNameTextView = view.findViewById(R.id.currentNameTextView);
+        Button reviewItemsButton = view.findViewById(R.id.reviewItemsButton);
 
         if (currentUser != null) {
             // If they set a display name show it on the screen
@@ -71,6 +74,38 @@ public class ProfileFragment extends Fragment {
                 }
             }
         }
+
+        // Go to new fragment to show the user's specific items
+        reviewItemsButton.setOnClickListener(v -> {
+            ItemReviewFragment fragment = ItemReviewFragment.newInstance();
+            AppCompatActivity activity = (AppCompatActivity) getActivity();
+
+            if (activity == null) {
+                return;
+            }
+
+            // Show the overlay container and toolbar
+            View overlayContainer = activity.findViewById(R.id.fragmentOverlayContainer);
+            View overlayToolbar = activity.findViewById(R.id.overlayToolbar);
+            TextView overlayTitle = activity.findViewById(R.id.overlayTitle);
+
+            if (overlayContainer != null) {
+                overlayContainer.setVisibility(View.VISIBLE);
+            }
+            if (overlayToolbar != null) {
+                overlayToolbar.setVisibility(View.VISIBLE);
+            }
+            if (overlayTitle != null) {
+                overlayTitle.setText("My Items");
+            }
+
+            // Add fragment to overlay container
+            activity.getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragmentOverlayContainer, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        });
 
         // Logout button click listener
         view.findViewById(R.id.lgoutButton).setOnClickListener(new OnClickSignOut());
