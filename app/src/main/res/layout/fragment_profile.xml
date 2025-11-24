@@ -95,6 +95,15 @@
         app:layout_constraintStart_toStartOf="@+id/offersTextView"
         app:layout_constraintTop_toBottomOf="@+id/offersTextView" />
 
+    <Button
+        android:id="@+id/reviewItemsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Your Items"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/listingTextView"
+        app:layout_constraintTop_toBottomOf="@+id/listingsStatementTextView" />
+
     <TextView
         android:id="@+id/listingTextView"
         android:layout_width="wrap_content"

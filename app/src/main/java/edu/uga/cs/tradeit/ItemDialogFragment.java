@@ -27,8 +27,7 @@ public class ItemDialogFragment extends DialogFragment {
 
     public interface ItemDialogListener {
         void addItem(Item item);
-//        void updateItem(Item item);
-//        void deleteItem(Item item);
+        void updateItem(Item item);
     }
 
     public void setCategory(Category category) {
@@ -38,6 +37,10 @@ public class ItemDialogFragment extends DialogFragment {
         if (categoryNameTextView != null) {
             categoryNameTextView.setText(category.getName());
         }
+    }
+
+    public void setItemToEdit(Item item) {
+        this.itemToEdit = item;
     }
 
     @Override
@@ -52,17 +55,47 @@ public class ItemDialogFragment extends DialogFragment {
 
         categoryNameTextView = layout.findViewById(R.id.selectedCategoryTextView);
 
-        // Set category name if already set
-        if (selectedCategory != null && categoryNameTextView != null) {
-            categoryNameTextView.setText(selectedCategory.getName());
+        // Check if we're editing an existing item
+        boolean isEditMode = (itemToEdit != null);
+
+        if (isEditMode) {
+            // Pre-populate fields with existing item data
+            itemNameEditText.setText(itemToEdit.getName());
+            if (itemToEdit.isFree()) {
+                isFreeCheckBox.setChecked(true);
+                itemPriceEditText.setEnabled(false);
+            } else {
+                isFreeCheckBox.setChecked(false);
+                itemPriceEditText.setText(String.valueOf(itemToEdit.getPrice()));
+            }
+            // Show category name (cannot be changed)
+            categoryNameTextView.setText(itemToEdit.getCategoryName());
+        } else {
+            // Set category name if already set (for add mode)
+            if (selectedCategory != null && categoryNameTextView != null) {
+                categoryNameTextView.setText(selectedCategory.getName());
+            }
         }
+
+        // Add listener to enable/disable price field based on free checkbox
+        isFreeCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                // Item is free - disable and clear price field
+                itemPriceEditText.setEnabled(false);
+                itemPriceEditText.setText("");
+            } else {
+                // Item is not free - enable price field
+                itemPriceEditText.setEnabled(true);
+            }
+        });
 
         // create a new AlertDialog
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Set its view (inflated above).
         builder.setView(layout);
 
-        builder.setTitle("Add item");
+        // Set title based on mode
+        builder.setTitle(isEditMode ? "Edit item" : "Add item");
 
         // Provide the negative button listener
         builder.setNegativeButton( android.R.string.cancel, new DialogInterface.OnClickListener() {
@@ -74,13 +107,13 @@ public class ItemDialogFragment extends DialogFragment {
         });
 
         // Provide the positive button listener
-        builder.setPositiveButton( android.R.string.ok, new ItemDialogFragment.AddItemListener() );
+        builder.setPositiveButton( android.R.string.ok, new ItemDialogFragment.SaveItemListener() );
 
         // Create the AlertDialog and show it
         return builder.create();
     }
 
-    private class AddItemListener implements  DialogInterface.OnClickListener {
+    private class SaveItemListener implements  DialogInterface.OnClickListener {
 
         @Override
         public void onClick(DialogInterface dialog, int which) {
@@ -109,8 +142,18 @@ public class ItemDialogFragment extends DialogFragment {
             // Get the listener from the parent fragment instead of activity
             ItemDialogListener listener = (ItemDialogListener) getParentFragment();
 
-            Item item = new Item(itemName, itemPrice, isFree, selectedCategory.getKey());
-            listener.addItem(item);
+            if (itemToEdit != null) {
+                // Edit mode - update existing item
+                itemToEdit.setName(itemName);
+                itemToEdit.setPrice(itemPrice);
+                itemToEdit.setFree(isFree);
+                // Category and createdAt are NOT changed
+                listener.updateItem(itemToEdit);
+            } else {
+                // Add mode - create new item
+                Item item = new Item(itemName, itemPrice, isFree, selectedCategory.getKey());
+                listener.addItem(item);
+            }
 
             dismiss();
         }

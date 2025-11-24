@@ -4,10 +4,14 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,6 +38,7 @@ public class ItemBrowseRecyclerAdapter extends RecyclerView.Adapter<ItemBrowseRe
 
         TextView itemOwnerTextView;
 
+        Button requestButton;
         public ItemHolder(View view) {
             super(view);
 
@@ -42,6 +47,7 @@ public class ItemBrowseRecyclerAdapter extends RecyclerView.Adapter<ItemBrowseRe
             itemCategoryTextView = view.findViewById(R.id.itemCategoryTextView);
             itemCreatedAtTextView = view.findViewById(R.id.itemCreatedAtTextView);
             itemOwnerTextView = view.findViewById(R.id.itemOwnerTextView);
+            requestButton = view.findViewById(R.id.buyButton);
 
         }
     }
@@ -63,10 +69,10 @@ public class ItemBrowseRecyclerAdapter extends RecyclerView.Adapter<ItemBrowseRe
         if (item.isFree()) {
             holder.itemPriceTextView.setText("Free");
         } else {
-            holder.itemPriceTextView.setText(String.valueOf(item.getPrice()));
+            holder.itemPriceTextView.setText("Price: $" +String.valueOf(item.getPrice()));
         }
 
-        holder.itemCategoryTextView.setText( item.getCategoryName());
+        holder.itemCategoryTextView.setText( "Category: "+ item.getCategoryName());
 
         long createdAt = item.getCreatedAt();
         if (createdAt > 0) {
@@ -77,10 +83,29 @@ public class ItemBrowseRecyclerAdapter extends RecyclerView.Adapter<ItemBrowseRe
             holder.itemCreatedAtTextView.setText("Created: Unknown");
         }
 
-        // Todo -> Name instead of id
-        holder.itemOwnerTextView.setText(item.getOwnerKey());
+        // Display owner name if available, otherwise show owner key
+        String ownerDisplay = item.getOwnerName();
+        if (ownerDisplay == null || ownerDisplay.isEmpty()) {
+            ownerDisplay = item.getOwnerKey();
+        }
+        holder.itemOwnerTextView.setText("Owner: " + (ownerDisplay != null ? ownerDisplay : "Unknown"));
 
+        // Check if current user owns the item and disable request button if so
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null && item.getOwnerKey() != null && (currentUser.getUid().equals(item.getOwnerKey()))) {
+                // User owns this item - disable and grey out the button
+                holder.requestButton.setEnabled(false);
+                holder.requestButton.setAlpha(0.5f); // Make it visually greyed out
+                holder.requestButton.setOnClickListener(null); // Remove any click listener
 
+        } else {
+            // No user logged in or no owner set - enable button by default
+            holder.requestButton.setEnabled(true);
+            holder.requestButton.setAlpha(1.0f);
+            holder.requestButton.setOnClickListener(v -> {
+                // TODO: Implement request functionality
+            });
+        }
     }
 
     @Override

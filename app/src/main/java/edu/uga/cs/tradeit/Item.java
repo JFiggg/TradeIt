@@ -10,6 +10,8 @@ public class Item {
 
     private String ownerKey;
 
+    private String ownerName;
+
     private String categoryName;
 
     private long createdAt;
@@ -40,8 +42,13 @@ public class Item {
         return price;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setPrice(Double price) {
+        if (price == null) {
+            this.price = 0.0;
+        } else {
+            this.price = price;
+        }
+
     }
 
     public String getKey() {
@@ -66,6 +73,14 @@ public class Item {
 
     public void setOwnerKey(String ownerKey) {
         this.ownerKey = ownerKey;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
     public long getCreatedAt() {

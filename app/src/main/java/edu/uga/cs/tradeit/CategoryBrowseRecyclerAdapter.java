@@ -33,12 +33,13 @@ public class CategoryBrowseRecyclerAdapter extends RecyclerView.Adapter<Category
         TextView categoryOwnerTextView;
         TextView categoryCreatedAtTextView;
         Button browseButton;
-
+        TextView categoryItemCountTextView;
         public CategoryHolder(View view) {
             super(view);
 
             categoryNameTextView = view.findViewById(R.id.categoryNameTextView);
             categoryOwnerTextView = view.findViewById(R.id.categoryOwnerTextView);
+            categoryItemCountTextView = view.findViewById(R.id.categoryItemCount);
             categoryCreatedAtTextView = view.findViewById(R.id.categoryCreatedAtTextView);
             browseButton = view.findViewById(R.id.browseButton);
         }
@@ -60,6 +61,10 @@ public class CategoryBrowseRecyclerAdapter extends RecyclerView.Adapter<Category
         String name = category.getName();
         String ownerKey = category.getOwnerKey();
         long createdAt = category.getCreatedAt();
+
+        if (category.getItems() != null) {
+            holder.categoryItemCountTextView.setText("Item Count: " + category.getItems().size());
+        }
 
         holder.categoryNameTextView.setText( category.getName());
 

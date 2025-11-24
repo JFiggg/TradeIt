@@ -2,6 +2,9 @@ package edu.uga.cs.tradeit;
 
 import com.google.firebase.database.Exclude;
 
+import java.util.HashMap;
+import java.util.List;
+
 public class Category
 {
     @Exclude  // Exclude from Firebase - key is derived from node key
@@ -13,6 +16,8 @@ public class Category
     private String ownerKey;
 
     private long createdAt;
+
+    private HashMap<String, Item> items;
 
     public Category() {
         this.key = null;
@@ -66,5 +71,13 @@ public class Category
 
     public void setCreatedAt(long createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public HashMap<String, Item> getItems() {
+        return items;
+    }
+
+    public void setItems(HashMap<String, Item> items) {
+        this.items = items;
     }
 }

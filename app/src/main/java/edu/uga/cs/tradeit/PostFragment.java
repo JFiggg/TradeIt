@@ -220,6 +220,13 @@ public class PostFragment extends Fragment implements CategoryDialogFragment.Add
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             item.setOwnerKey(currentUser.getUid());
+            String displayName = currentUser.getDisplayName();
+            if (displayName != null && !displayName.isEmpty()) {
+                item.setOwnerName(displayName);
+            } else {
+                String email = currentUser.getEmail();
+                item.setOwnerName(email != null ? email : "Unknown");
+            }
         }
         item.setCreatedAt(System.currentTimeMillis());
 
@@ -234,5 +241,26 @@ public class PostFragment extends Fragment implements CategoryDialogFragment.Add
                 });
     }
 
+    @Override
+    public void updateItem(Item item) {
+        if (item.getCategoryName() == null || item.getKey() == null) {
+            Toast.makeText(getContext(), "Error: Item missing category or key", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
+        DatabaseReference itemRef = database.getReference("categories")
+                .child(item.getCategoryName())
+                .child("items")
+                .child(item.getKey());
+
+        itemRef.setValue(item)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(DEBUG_TAG, "Item updated: " + item.getName());
+                    Toast.makeText(getContext(), "Item updated: " + item.getName(), Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(DEBUG_TAG, "Error updating item: " + e.getMessage());
+                    Toast.makeText(getContext(), "Failed to update item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
 }
