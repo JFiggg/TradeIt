@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 import edu.uga.cs.tradeit.R;
+import edu.uga.cs.tradeit.objects.Item;
 import edu.uga.cs.tradeit.objects.Transaction;
 
 public class ItemBuyerRecyclerAdapter extends RecyclerView.Adapter<ItemBuyerRecyclerAdapter.ItemHolder> {
@@ -121,48 +122,77 @@ public class ItemBuyerRecyclerAdapter extends RecyclerView.Adapter<ItemBuyerRecy
         return transactionList.size();
     }
 
+    /**
+     * Buyer cancels their own request. DELETES the transaction entry and RECREATES the Item.
+     * This logic would be triggered by the ItemBuyerRecyclerAdapter.
+     */
     private void cancelRequest(Transaction transaction) {
 
-        // 1. Validate mandatory fields needed for updating the item
-        final String categoryName = transaction.getCategoryName();
-        final String itemId = transaction.getItemId();
-
-        if (transaction.getKey() == null || categoryName == null || itemId == null) {
-            Log.e(DEBUG_TAG, "Error: Missing critical keys in transaction data. Cannot cancel.");
-            Toast.makeText(context, "Failed to cancel: Transaction data incomplete.", Toast.LENGTH_SHORT).show();
+        // Validate mandatory fields needed for operation
+        if (transaction.getKey() == null) {
+            Toast.makeText(context, "Failed to cancel: Transaction key missing.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // --- Part 1: Update Transaction Status ---
+        // 1. Get the reference to the transaction node
         DatabaseReference transactionRef = FirebaseDatabase.getInstance()
                 .getReference("transactions")
                 .child(transaction.getKey());
 
-        transactionRef.child("status").setValue("cancelled")
+        // 2. DELETE the transaction node entirely
+        transactionRef.removeValue()
                 .addOnSuccessListener(aVoid -> {
-                    Log.d(DEBUG_TAG, "Transaction " + transaction.getKey() + " cancelled successfully.");
+                    Log.d(DEBUG_TAG, "Transaction " + transaction.getKey() + " cancelled/deleted successfully.");
 
-                    // --- Part 2: Restore Item Availability ---
-                    DatabaseReference itemRef = FirebaseDatabase.getInstance()
-                            .getReference("categories")
-                            .child(categoryName)
-                            .child("items")
-                            .child(itemId);
+                    // 3. Recreate (restore) the Item to the market
+                    recreateItemFromTransaction(transaction);
 
-                    // Update the status of the original item to "available"
-                    itemRef.child("status").setValue("available")
-                            .addOnSuccessListener(aVoid2 -> {
-                                Log.d(DEBUG_TAG, "Item " + itemId + " status restored to 'available'.");
-                                Toast.makeText(context, "Request cancelled. Item is now back on the market.", Toast.LENGTH_LONG).show();
-                            })
-                            .addOnFailureListener(e -> {
-                                Log.e(DEBUG_TAG, "Error restoring item status: " + e.getMessage());
-                                Toast.makeText(context, "Request cancelled, but failed to restore item status.", Toast.LENGTH_LONG).show();
-                            });
+                    // Update local list (assuming the buyer's adapter uses the same list type)
+                    transactionList.remove(transaction);
+                    notifyDataSetChanged();
+                    Toast.makeText(context, "Request cancelled. Item restored to market.", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(DEBUG_TAG, "Failed to update transaction status to cancelled: " + e.getMessage());
-                    Toast.makeText(context, "Failed to cancel request.", Toast.LENGTH_SHORT).show();
+                    Log.e(DEBUG_TAG, "Failed to delete transaction: " + e.getMessage());
+                    Toast.makeText(context, "Failed to cancel request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+
+    /**
+     * Helper to RECREATE the Item object using data from the Transaction and push it back to the categories node.
+     * This assumes the Item was DESTROYED when the request was made.
+     * @param transaction The source transaction data.
+     */
+    private void recreateItemFromTransaction(Transaction transaction) {
+        String categoryName = transaction.getCategoryName();
+        String itemId = transaction.getItemId();
+        String itemName = transaction.getItemName();
+        Double amount = transaction.getAmount();
+        String ownerKey = transaction.getSender(); // The recipient of the TX is the item owner (seller)
+
+        if (categoryName == null || itemId == null || itemName == null || ownerKey == null) {
+            Log.e(DEBUG_TAG, "Cannot recreate item: missing critical fields in transaction.");
+            return;
+        }
+
+        // --- NOTE: DATA LOSS OCCURS HERE as only basic fields are restored ---
+        boolean isFree = (amount == 0.0);
+        Item restoredItem = new Item(itemName, amount, isFree, categoryName);
+        restoredItem.setKey(itemId);
+        restoredItem.setOwnerKey(ownerKey);
+        restoredItem.setCreatedAt(System.currentTimeMillis());
+
+        // Get reference to the item's original location
+        DatabaseReference itemRef = FirebaseDatabase.getInstance()
+                .getReference("categories")
+                .child(categoryName)
+                .child("items")
+                .child(itemId);
+
+        // Write the newly created Item object back to the database, making it available
+        itemRef.setValue(restoredItem)
+                .addOnSuccessListener(aVoid -> Log.d(DEBUG_TAG, "Item '" + itemName + "' recreated and restored."))
+                .addOnFailureListener(e -> Log.e(DEBUG_TAG, "Failed to recreate item: " + e.getMessage()));
     }
 }

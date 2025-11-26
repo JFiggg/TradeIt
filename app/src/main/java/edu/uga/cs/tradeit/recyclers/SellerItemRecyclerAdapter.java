@@ -1,5 +1,7 @@
 package edu.uga.cs.tradeit.recyclers;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -119,7 +121,7 @@ public class SellerItemRecyclerAdapter extends RecyclerView.Adapter<SellerItemRe
                     .setTitle("Decline Item")
                     .setMessage("Are you sure you want to decline the transaction \"" + transaction.getItemName() + "\"?")
                     .setPositiveButton("Decline", (dialog, which) -> {
-                        declineItem(transaction);
+                        declineRequest(transaction);
                     })
                     .setNegativeButton("Cancel", null)
                     .show();
@@ -150,83 +152,72 @@ public class SellerItemRecyclerAdapter extends RecyclerView.Adapter<SellerItemRe
                 });
     }
 
-    /**
-     * Declines a transaction and restores the transaction to the market.
-     * This method is used when the original Item was DESTROYED (removed from the
-     * categories node) upon the initial buy request.
-     * * @param transaction The Transaction object associated with the pending request.
-     */
-    private void declineItem(Transaction transaction) {
-        // 1. Validate mandatory fields needed for restoration
-        String categoryName = transaction.getCategoryName();
-        String transactionId = transaction.getItemId();
-        String transactionName = transaction.getItemName();
-        String ownerKey = transaction.getRecipient(); // Assuming the recipient of the TX is the transaction owner (seller)
+    private void declineRequest(Transaction transaction) {
 
-        if (categoryName == null || transactionId == null || transactionName == null || ownerKey == null) {
-            Log.e("DECLINE_TX", "Error: Missing critical fields in transaction data. Cannot restore transaction.");
-            Toast.makeText(context, "Failed to decline: Transaction data incomplete.", Toast.LENGTH_SHORT).show();
+        // Validate mandatory fields needed for operation
+        if (transaction.getKey() == null) {
+            Toast.makeText(context, "Failed to cancel: Transaction key missing.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // 2. Mark the transaction as cancelled in Firebase
+        // 1. Get the reference to the transaction node
         DatabaseReference transactionRef = FirebaseDatabase.getInstance()
                 .getReference("transactions")
                 .child(transaction.getKey());
 
-        transactionRef.child("status").setValue("cancelled")
+        // 2. DELETE the transaction node entirely
+        transactionRef.removeValue()
                 .addOnSuccessListener(aVoid -> {
-                    Log.d("DECLINE_TX", "Transaction " + transaction.getKey() + " cancelled successfully.");
+                    Log.d(DEBUG_TAG, "Transaction " + transaction.getKey() + " cancelled/deleted successfully.");
 
-                    // 3. Proceed to recreate (restore) the Item
-                    restoreItem(transaction, ownerKey);
+                    // 3. Recreate (restore) the Item to the market
+                    recreateItemFromTransaction(transaction);
+
+                    transactionList.remove(transaction);
+                    notifyDataSetChanged();
+                    Toast.makeText(context, "Request cancelled. Item restored to market.", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("DECLINE_TX", "Failed to update transaction status: " + e.getMessage());
-                    Toast.makeText(context, "Failed to decline request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(DEBUG_TAG, "Failed to delete transaction: " + e.getMessage());
+                    Toast.makeText(context, "Failed to cancel request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
 
     /**
-     * Helper to recreate the Item object using data from the Transaction and push it back to the categories node.
-     * * @param transaction The source transaction data.
-     * @param ownerKey The UID of the transaction owner (seller).
+     * Helper to RECREATE the Item object using data from the Transaction and push it back to the categories node.
+     * This assumes the Item was DESTROYED when the request was made.
+     * @param transaction The source transaction data.
      */
-    private void restoreItem(Transaction transaction, String ownerKey) {
-        // Extract fields needed for the Item constructor
-        String transactionName = transaction.getItemName();
-        Double amount = transaction.getAmount();
-        boolean isFree = (amount == 0.0);
+    private void recreateItemFromTransaction(Transaction transaction) {
         String categoryName = transaction.getCategoryName();
-        String transactionId = transaction.getItemId();
+        String itemId = transaction.getItemId();
+        String itemName = transaction.getItemName();
+        Double amount = transaction.getAmount();
+        String ownerKey = transaction.getSender(); // The recipient of the TX is the item owner (seller)
 
-        // NOTE: This Item constructor is LIMITED to the fields available in Transaction.
-        // Complex fields like description or image URLs are LOST here.
-        Item restoredItem = new Item(transactionName, amount, isFree, categoryName);
+        if (categoryName == null || itemId == null || itemName == null || ownerKey == null) {
+            Log.e(DEBUG_TAG, "Cannot recreate item: missing critical fields in transaction.");
+            return;
+        }
 
-        // Set properties needed for database indexing and display
-        restoredItem.setKey(transactionId);
+        // NOTE: DATA LOSS OCCURS HERE as only basic fields are restored ---
+        boolean isFree = (amount == 0.0);
+        Item restoredItem = new Item(itemName, amount, isFree, categoryName);
+        restoredItem.setKey(itemId);
         restoredItem.setOwnerKey(ownerKey);
-        // Set a new timestamp since the old transaction was "destroyed"
         restoredItem.setCreatedAt(System.currentTimeMillis());
 
-        // Get reference to the transaction's original location
-        DatabaseReference transactionRef = FirebaseDatabase.getInstance()
+        // Get reference to the item's original location
+        DatabaseReference itemRef = FirebaseDatabase.getInstance()
                 .getReference("categories")
                 .child(categoryName)
-                .child("transactions")
-                .child(transactionId); // Use the transaction's original key
+                .child("items")
+                .child(itemId);
 
-        // Write the newly created Item object back to the database
-        transactionRef.setValue(restoredItem)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d("DECLINE_TX", "Item '" + transactionName + "' recreated and restored to the market.");
-                    Toast.makeText(context, "Request declined. Item is now available.", Toast.LENGTH_SHORT).show();
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("DECLINE_TX", "Failed to recreate/restore transaction: " + e.getMessage());
-                    Toast.makeText(context, "Error: Item restoration failed.", Toast.LENGTH_SHORT).show();
-                });
+        // Write the newly created Item object back to the database, making it available
+        itemRef.setValue(restoredItem)
+                .addOnSuccessListener(aVoid -> Log.d(DEBUG_TAG, "Item '" + itemName + "' recreated and restored."))
+                .addOnFailureListener(e -> Log.e(DEBUG_TAG, "Failed to recreate item: " + e.getMessage()));
     }
 }
