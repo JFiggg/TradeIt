@@ -39,6 +39,7 @@ public class ProfileFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_profile, container, false);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -51,8 +52,10 @@ public class ProfileFragment extends Fragment {
         // Text view to show user's name
         TextView nameTextView = view.findViewById(R.id.nameTextView);
         TextView emailTextView = view.findViewById(R.id.emailTextView);
-        TextView currentNameTextView = view.findViewById(R.id.currentNameTextView);
+        Button requestButton = view.findViewById(R.id.requestsButton);
         Button reviewItemsButton = view.findViewById(R.id.reviewItemsButton);
+        Button pendingTransactionButton = view.findViewById(R.id.pendingTransactionsButton);
+        Button historyButton = view.findViewById(R.id.historyButton);
 
         if (currentUser != null) {
             // If they set a display name show it on the screen
@@ -61,54 +64,72 @@ public class ProfileFragment extends Fragment {
             emailTextView.setText(emailDisplay);
             if (displayName != null && !displayName.isEmpty()) {
                 nameTextView.setText("Hello, " + displayName);
-                currentNameTextView.setText(displayName);
             } else {
                 // Fallback
                 String email = currentUser.getEmail();
                 if (email != null) {
                     nameTextView.setText("Hello, " + email);
-                    currentNameTextView.setText(email);
                 } else {
                     nameTextView.setText("Hello, User");
-                    currentNameTextView.setText("User");
                 }
             }
         }
 
-        // Go to new fragment to show the user's specific items
+        // 1. My Items (Review Items) - Original logic kept and streamlined using helper
         reviewItemsButton.setOnClickListener(v -> {
-            ItemReviewFragment fragment = ItemReviewFragment.newInstance();
-            AppCompatActivity activity = (AppCompatActivity) getActivity();
+            navigateToFragment(ItemReviewFragment.newInstance(), "My Posted Items");
+        });
 
-            if (activity == null) {
-                return;
-            }
+        // 2. Pending Transaction (Seller Requests/Approvals)
+        // This is typically the list of transactions awaiting the seller's approval
+        pendingTransactionButton.setOnClickListener(v -> {
+            navigateToFragment(ItemSellerFragment.newInstance(), "Pending Requests (Seller)");
+        });
 
-            // Show the overlay container and toolbar
-            View overlayContainer = activity.findViewById(R.id.fragmentOverlayContainer);
-            View overlayToolbar = activity.findViewById(R.id.overlayToolbar);
-            TextView overlayTitle = activity.findViewById(R.id.overlayTitle);
+        // 3. Buyer Requests (Transactions the user SENT)
+        requestButton.setOnClickListener(v -> {
+            navigateToFragment(ItemBuyerFragment.newInstance(), "My Pending Bids");
+        });
 
-            if (overlayContainer != null) {
-                overlayContainer.setVisibility(View.VISIBLE);
-            }
-            if (overlayToolbar != null) {
-                overlayToolbar.setVisibility(View.VISIBLE);
-            }
-            if (overlayTitle != null) {
-                overlayTitle.setText("My Items");
-            }
-
-            // Add fragment to overlay container
-            activity.getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragmentOverlayContainer, fragment)
-                    .addToBackStack(null)
-                    .commit();
+        // For now, let's make the History Button handle the full history.
+        historyButton.setOnClickListener(v -> {
+            navigateToFragment(ItemHistoryFragment.newInstance(), "Transaction History");
         });
 
         // Logout button click listener
         view.findViewById(R.id.lgoutButton).setOnClickListener(new OnClickSignOut());
+
+    }
+
+    // Helper method to handle fragment navigation and overlay setup
+    private void navigateToFragment(Fragment fragment, String title) {
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+
+        if (activity == null) {
+            return;
+        }
+
+        // Show the overlay container and toolbar
+        View overlayContainer = activity.findViewById(R.id.fragmentOverlayContainer);
+        View overlayToolbar = activity.findViewById(R.id.overlayToolbar);
+        TextView overlayTitle = activity.findViewById(R.id.overlayTitle);
+
+        if (overlayContainer != null) {
+            overlayContainer.setVisibility(View.VISIBLE);
+        }
+        if (overlayToolbar != null) {
+            overlayToolbar.setVisibility(View.VISIBLE);
+        }
+        if (overlayTitle != null) {
+            overlayTitle.setText(title);
+        }
+
+        // Add fragment to overlay container
+        activity.getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentOverlayContainer, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 
     private class OnClickSignOut implements View.OnClickListener {

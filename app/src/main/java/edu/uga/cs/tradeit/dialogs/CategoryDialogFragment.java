@@ -1,4 +1,4 @@
-package edu.uga.cs.tradeit;
+package edu.uga.cs.tradeit.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -11,6 +11,9 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+
+import edu.uga.cs.tradeit.R;
+import edu.uga.cs.tradeit.objects.Category;
 
 public class CategoryDialogFragment extends DialogFragment {
     private EditText categoryNameEditText;

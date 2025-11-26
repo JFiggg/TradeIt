@@ -24,7 +24,7 @@
         android:id="@+id/emailstatementTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="20dp"
         android:text="Your email:"
         android:textSize="16dp"
         android:textStyle="bold"
@@ -44,45 +44,24 @@
         app:layout_constraintTop_toBottomOf="@+id/emailstatementTextView" />
 
     <TextView
-        android:id="@+id/nameStatementTextView"
+        android:id="@+id/requestsStatementTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="Your name:"
+        android:text="Your requests:"
         android:textSize="16dp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="@+id/emailTextView"
         app:layout_constraintTop_toBottomOf="@+id/emailTextView" />
 
-    <TextView
-        android:id="@+id/currentNameTextView"
+    <Button
+        android:id="@+id/requestsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="name"
-        app:layout_constraintStart_toStartOf="@+id/nameStatementTextView"
-        app:layout_constraintTop_toBottomOf="@+id/nameStatementTextView" />
-
-    <TextView
-        android:id="@+id/offersStatementTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Your offers:"
-        android:textSize="16dp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/currentNameTextView"
-        app:layout_constraintTop_toBottomOf="@+id/currentNameTextView" />
-
-    <TextView
-        android:id="@+id/offersTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="offers"
-        android:textSize="16dp"
-        app:layout_constraintStart_toStartOf="@+id/offersStatementTextView"
-        app:layout_constraintTop_toBottomOf="@+id/offersStatementTextView" />
+        android:text="View your requests"
+        app:layout_constraintStart_toStartOf="@+id/requestsStatementTextView"
+        app:layout_constraintTop_toBottomOf="@+id/requestsStatementTextView" />
 
     <TextView
         android:id="@+id/listingsStatementTextView"
@@ -92,30 +71,60 @@
         android:text="Your listings:"
         android:textSize="16dp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/offersTextView"
-        app:layout_constraintTop_toBottomOf="@+id/offersTextView" />
+        app:layout_constraintStart_toStartOf="@+id/requestsButton"
+        app:layout_constraintTop_toBottomOf="@+id/requestsButton" />
 
     <Button
         android:id="@+id/reviewItemsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="View Your Items"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/listingTextView"
-        app:layout_constraintTop_toBottomOf="@+id/listingsStatementTextView" />
-
-    <TextView
-        android:id="@+id/listingTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="listings"
-        android:textSize="16dp"
+        android:text="View Your Items"
         app:layout_constraintStart_toStartOf="@+id/listingsStatementTextView"
         app:layout_constraintTop_toBottomOf="@+id/listingsStatementTextView" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/pendingStatementTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Pending Transactions:"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/reviewItemsButton"
+        app:layout_constraintTop_toBottomOf="@+id/reviewItemsButton" />
+
+    <Button
+        android:id="@+id/pendingTransactionsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="View Pending"
+        app:layout_constraintStart_toStartOf="@+id/pendingStatementTextView"
+        app:layout_constraintTop_toBottomOf="@+id/pendingStatementTextView" />
+
+    <TextView
+        android:id="@+id/historyStatementTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Transaction History:"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/pendingTransactionsButton"
+        app:layout_constraintTop_toBottomOf="@+id/pendingTransactionsButton" />
+
+    <Button
+        android:id="@+id/historyButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="View History"
+        app:layout_constraintStart_toStartOf="@+id/historyStatementTextView"
+        app:layout_constraintTop_toBottomOf="@+id/historyStatementTextView" />
+
+    <TextView
+        android:id="@+id/logoutTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Done?"

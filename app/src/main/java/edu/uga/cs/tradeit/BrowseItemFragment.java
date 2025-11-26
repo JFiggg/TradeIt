@@ -23,6 +23,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import edu.uga.cs.tradeit.objects.Item;
+import edu.uga.cs.tradeit.objects.Transaction;
+import edu.uga.cs.tradeit.recyclers.ItemBrowseRecyclerAdapter;
+
 public class BrowseItemFragment extends Fragment {
 
     private static final String DEBUG_TAG = "BrowseItemFragment";
@@ -62,7 +66,7 @@ public class BrowseItemFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         itemList = new ArrayList<>();
-        adapter = new ItemBrowseRecyclerAdapter(itemList, getContext());
+        adapter = new ItemBrowseRecyclerAdapter(itemList, getContext(), this);
         recyclerView.setAdapter(adapter);
 
         database = FirebaseDatabase.getInstance();
@@ -103,5 +107,40 @@ public class BrowseItemFragment extends Fragment {
         });
 
         return view;
+    }
+
+    public void requestItem(Item item, String buyerUID) {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference transactionRef = database.getReference("transactions").push();
+
+        Transaction transaction = new Transaction(
+                item.getKey(),
+                item.getName(),
+                item.getOwnerKey(),
+                buyerUID,
+                "pending",
+                item.isFree() ? 0.0 : item.getPrice(),
+                System.currentTimeMillis(),
+                item.getCategoryName()
+        );
+
+        transaction.setKey(transactionRef.getKey());
+
+        transactionRef.setValue(transaction)
+                .addOnSuccessListener(a -> {
+                    Log.d("TX", "Transaction saved");
+
+                    // Remove item from category only after transaction saves
+                    DatabaseReference categoryItemRef = FirebaseDatabase.getInstance()
+                            .getReference("categories")
+                            .child(item.getCategoryName())
+                            .child("items")
+                            .child(item.getKey());
+
+                    categoryItemRef.removeValue()
+                            .addOnSuccessListener(v -> Log.d("TX", "Item removed from category"))
+                            .addOnFailureListener(e -> Log.e("TX", "Failed to remove item: " + e));
+                })
+                .addOnFailureListener(e -> Log.e("TX", "Error: " + e));
     }
 }

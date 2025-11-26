@@ -1,4 +1,4 @@
-package edu.uga.cs.tradeit;
+package edu.uga.cs.tradeit.recyclers;
 
 import android.content.Context;
 import android.util.Log;
@@ -23,6 +23,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import edu.uga.cs.tradeit.R;
+import edu.uga.cs.tradeit.dialogs.ItemDialogFragment;
+import edu.uga.cs.tradeit.objects.Item;
 
 public class ItemReviewRecyclerAdapter extends RecyclerView.Adapter<ItemReviewRecyclerAdapter.ItemHolder> {
 

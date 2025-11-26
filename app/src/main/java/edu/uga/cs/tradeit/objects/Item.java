@@ -1,4 +1,4 @@
-package edu.uga.cs.tradeit;
+package edu.uga.cs.tradeit.objects;
 
 import com.google.firebase.database.Exclude;
 

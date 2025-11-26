@@ -1,4 +1,4 @@
-package edu.uga.cs.tradeit;
+package edu.uga.cs.tradeit.recyclers;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,6 +16,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import edu.uga.cs.tradeit.BrowseItemFragment;
+import edu.uga.cs.tradeit.R;
+import edu.uga.cs.tradeit.objects.Category;
 
 public class CategoryBrowseRecyclerAdapter extends RecyclerView.Adapter<CategoryBrowseRecyclerAdapter.CategoryHolder> {
     private List<Category> categoryList;

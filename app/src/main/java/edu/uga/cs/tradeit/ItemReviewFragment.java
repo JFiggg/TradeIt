@@ -27,6 +27,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import edu.uga.cs.tradeit.dialogs.ItemDialogFragment;
+import edu.uga.cs.tradeit.objects.Item;
+import edu.uga.cs.tradeit.recyclers.ItemReviewRecyclerAdapter;
+
 public class ItemReviewFragment extends Fragment implements ItemDialogFragment.ItemDialogListener {
 
     private static final String DEBUG_TAG = "ItemReviewFragment";

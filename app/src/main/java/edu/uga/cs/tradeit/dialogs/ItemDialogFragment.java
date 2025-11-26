@@ -1,4 +1,4 @@
-package edu.uga.cs.tradeit;
+package edu.uga.cs.tradeit.dialogs;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -13,6 +13,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+
+import edu.uga.cs.tradeit.R;
+import edu.uga.cs.tradeit.objects.Category;
+import edu.uga.cs.tradeit.objects.Item;
 
 public class ItemDialogFragment extends DialogFragment {
     private EditText itemNameEditText;

@@ -1,4 +1,4 @@
-package edu.uga.cs.tradeit;
+package edu.uga.cs.tradeit.recyclers;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -18,14 +18,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import edu.uga.cs.tradeit.BrowseItemFragment;
+import edu.uga.cs.tradeit.R;
+import edu.uga.cs.tradeit.objects.Item;
+
 public class ItemBrowseRecyclerAdapter extends RecyclerView.Adapter<ItemBrowseRecyclerAdapter.ItemHolder> {
 
     private List<Item> itemList;
     private Context context;
+    private BrowseItemFragment parentFragment;
 
-    public ItemBrowseRecyclerAdapter(List<Item> itemList, Context context) {
+
+    public ItemBrowseRecyclerAdapter(List<Item> itemList, Context context, BrowseItemFragment parentFragment) {
         this.itemList = itemList;
         this.context = context;
+        this.parentFragment = parentFragment;
     }
 
     class ItemHolder extends RecyclerView.ViewHolder {
@@ -103,7 +110,17 @@ public class ItemBrowseRecyclerAdapter extends RecyclerView.Adapter<ItemBrowseRe
             holder.requestButton.setEnabled(true);
             holder.requestButton.setAlpha(1.0f);
             holder.requestButton.setOnClickListener(v -> {
-                // TODO: Implement request functionality
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                String buyerUID = (user != null) ? user.getUid() : "";
+
+                new androidx.appcompat.app.AlertDialog.Builder(context)
+                        .setTitle("Request " + item.getName() + "?")
+                        .setMessage("Are you sure you want to request \"" + item.getName() + "\"?")
+                        .setPositiveButton("Request", (dialog, which) -> {
+                            parentFragment.requestItem(item, buyerUID); // ← CALL FRAGMENT
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
             });
         }
     }

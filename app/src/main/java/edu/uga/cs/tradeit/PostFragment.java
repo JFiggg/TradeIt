@@ -27,6 +27,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import edu.uga.cs.tradeit.dialogs.CategoryDialogFragment;
+import edu.uga.cs.tradeit.dialogs.ItemDialogFragment;
+import edu.uga.cs.tradeit.objects.Category;
+import edu.uga.cs.tradeit.objects.Item;
+import edu.uga.cs.tradeit.recyclers.CategoryPostRecyclerAdapter;
+
 /**
  * Placeholder screen to view all categories
  */

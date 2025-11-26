@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/reviewItemFragmentContainer"
+    android:id="@+id/ItemBuyerFragmentContainer"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -10,7 +10,7 @@
     android:paddingTop="72dp"
     android:paddingBottom="16dp"
     android:background="?android:attr/windowBackground"
-    tools:context=".BrowseItemFragment">
+    tools:context=".ItemBuyerFragment">
 
     <Button
         android:id="@+id/addItemButton"
@@ -21,7 +21,7 @@
         android:visibility="invisible" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/reviewItemsRecyclerView"
+        android:id="@+id/itemBuyerRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
