@@ -140,6 +140,7 @@ public class ProfileFragment extends Fragment {
             // Navigate back to sign in screen
             Intent intent = new Intent(requireContext(), AuthActivity.class);
             startActivity(intent);
+            requireActivity().finish();
         }
     }
 }

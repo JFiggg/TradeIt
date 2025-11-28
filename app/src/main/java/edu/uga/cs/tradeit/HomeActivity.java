@@ -1,5 +1,6 @@
 package edu.uga.cs.tradeit;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -12,6 +13,10 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import edu.uga.cs.tradeit.auth.AuthActivity;
 import edu.uga.cs.tradeit.databinding.ActivityHomeBinding;
 
 public class HomeActivity extends AppCompatActivity {
@@ -22,6 +27,18 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Check if user is logged in
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            // User is not logged in, redirect to AuthActivity
+            Intent intent = new Intent(this, AuthActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         EdgeToEdge.enable(this);
         binding = ActivityHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());

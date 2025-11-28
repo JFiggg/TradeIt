@@ -99,12 +99,12 @@ public class SellerItemRecyclerAdapter extends RecyclerView.Adapter<SellerItemRe
             holder.transactionCreatedAtTextView.setText("Created: Unknown");
         }
 
-        // Display owner name if available, otherwise show owner key
-        String ownerDisplay = transaction.getRecipient();
-        if (ownerDisplay == null || ownerDisplay.isEmpty()) {
-            ownerDisplay = transaction.getRecipient();
+        // Display buyer (requester) name - use display name with fallback to UID
+        String buyerDisplay = transaction.getRecipientDisplayName();
+        if (buyerDisplay == null || buyerDisplay.isEmpty()) {
+            buyerDisplay = transaction.getRecipient();
         }
-        holder.transactionOwnerTextView.setText("Owner: " + (ownerDisplay != null ? ownerDisplay : "Unknown"));
+        holder.transactionOwnerTextView.setText("Requester: " + (buyerDisplay != null ? buyerDisplay : "Unknown"));
 
         holder.transactionStatusTextView.setText("Status: " + transaction.getStatus());
 
@@ -189,43 +189,38 @@ public class SellerItemRecyclerAdapter extends RecyclerView.Adapter<SellerItemRe
 
 
     /**
-     * Helper to recreate the Item object using data from the Transaction and push it back to the categories node.
-     * * @param transaction The source transaction data.
-     * @param ownerKey The UID of the transaction owner (seller).
+     * Helper to restore the complete Item object from transaction data back to the categories node.
+     * @param transaction The source transaction data containing the full item.
+     * @param ownerKey The UID of the transaction owner (seller) - not used anymore.
      */
     private void restoreItem(Transaction transaction, String ownerKey) {
-        // Extract fields needed for the Item constructor
-        String transactionName = transaction.getItemName();
-        Double amount = transaction.getAmount();
-        boolean isFree = (amount == 0.0);
+        // Get the complete item from transaction
+        Item restoredItem = transaction.getItem();
+
+        if (restoredItem == null) {
+            Log.e("DECLINE_TX", "Error: No item data stored in transaction. Cannot restore item.");
+            Toast.makeText(context, "Error: Item data missing in transaction.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String categoryName = transaction.getCategoryName();
-        String transactionId = transaction.getItemId();
+        String itemId = transaction.getItemId();
 
-        // NOTE: This Item constructor is LIMITED to the fields available in Transaction.
-        // Complex fields like description or image URLs are LOST here.
-        Item restoredItem = new Item(transactionName, amount, isFree, categoryName);
-
-        // Set properties needed for database indexing and display
-        restoredItem.setKey(transactionId);
-        restoredItem.setOwnerKey(ownerKey);
-        // Set a new timestamp since the old transaction was "destroyed"
-        restoredItem.setCreatedAt(System.currentTimeMillis());
-
-        // Get reference to the transaction's original location
-        DatabaseReference transactionRef = FirebaseDatabase.getInstance()
+        // Get reference to the item's location in the category
+        DatabaseReference itemRef = FirebaseDatabase.getInstance()
                 .getReference("categories")
                 .child(categoryName)
-                .child("transactions")
-                .child(transactionId); // Use the transaction's original key
+                .child("items")  // FIXED: was "transactions", now correctly "items"
+                .child(itemId);
 
-        // Write the newly created Item object back to the database
-        transactionRef.setValue(restoredItem)
+        // Write the complete Item object back to the database
+        itemRef.setValue(restoredItem)
                 .addOnSuccessListener(aVoid -> {
-                    Log.d("DECLINE_TX", "Item '" + transactionName + "' recreated and restored to the market.");
+                    Log.d("DECLINE_TX", "Item '" + transaction.getItemName() + "' fully restored to category.");
                     Toast.makeText(context, "Request declined. Item is now available.", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("DECLINE_TX", "Failed to recreate/restore transaction: " + e.getMessage());
+                    Log.e("DECLINE_TX", "Failed to restore item: " + e.getMessage());
                     Toast.makeText(context, "Error: Item restoration failed.", Toast.LENGTH_SHORT).show();
                 });
     }

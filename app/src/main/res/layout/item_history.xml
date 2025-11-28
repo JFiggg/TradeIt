@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
     android:background="#ffffff">
 
     <FrameLayout
@@ -19,14 +20,26 @@
     </FrameLayout>
 
     <TextView
+        android:id="@+id/itemBuyerTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:text="Buyer: buyer_id"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/frameLayout3" />
+
+    <TextView
         android:id="@+id/statusTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
         android:text="status"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frameLayout3" />
+        app:layout_constraintTop_toBottomOf="@+id/itemBuyerTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

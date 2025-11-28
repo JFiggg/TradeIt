@@ -16,6 +16,7 @@ public class Category
 
     private long createdAt;
 
+    @Exclude // Firebase
     private HashMap<String, Item> items;
 
     public Category() {

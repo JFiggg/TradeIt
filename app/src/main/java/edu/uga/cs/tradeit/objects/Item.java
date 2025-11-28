@@ -29,6 +29,11 @@ public class Item {
         this.isFree = isFree;
         this.categoryName = categoryName;
 
+        if (price <= 0) {
+            isFree = true;
+        }
+
+
         if (isFree) {
             this.price = null;
         }
@@ -38,7 +43,10 @@ public class Item {
         }
     }
 
-    public double getPrice() {
+    public Double getPrice() {
+        if (this.price == null) {
+            this.price = 0.0;
+        }
         return price;
     }
 
@@ -48,7 +56,6 @@ public class Item {
         } else {
             this.price = price;
         }
-
     }
 
     public String getKey() {

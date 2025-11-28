@@ -113,6 +113,21 @@ public class BrowseItemFragment extends Fragment {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference transactionRef = database.getReference("transactions").push();
 
+        // Get display names for sender (seller) and recipient (buyer)
+        String senderDisplayName = item.getOwnerName(); // Seller's name from item
+        String recipientDisplayName = "Unknown";
+
+        com.google.firebase.auth.FirebaseUser currentUser = com.google.firebase.auth.FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String displayName = currentUser.getDisplayName();
+            if (displayName != null && !displayName.isEmpty()) {
+                recipientDisplayName = displayName;
+            } else {
+                String email = currentUser.getEmail();
+                recipientDisplayName = email != null ? email : buyerUID;
+            }
+        }
+
         Transaction transaction = new Transaction(
                 item.getKey(),
                 item.getName(),
@@ -121,7 +136,10 @@ public class BrowseItemFragment extends Fragment {
                 "pending",
                 item.isFree() ? 0.0 : item.getPrice(),
                 System.currentTimeMillis(),
-                item.getCategoryName()
+                item.getCategoryName(),
+                item,  // Store complete item data for restoration
+                senderDisplayName,
+                recipientDisplayName
         );
 
         transaction.setKey(transactionRef.getKey());

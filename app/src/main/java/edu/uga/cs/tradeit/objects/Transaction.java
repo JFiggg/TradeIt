@@ -9,10 +9,17 @@ public class Transaction {
     private String itemName;
     private String categoryName;
     private String sender;
+
+    private String senderDisplayName;
+
     private String recipient;
+    private String recipientDisplayName;
+
+
     private String status;
     private double amount;
     private long timestamp;
+    private Item item;  // Store complete item data for restoration
 
     public Transaction() {
         // needed for Firebase
@@ -27,6 +34,20 @@ public class Transaction {
         this.amount = amount;
         this.timestamp = timestamp;
         this.categoryName = categoryName;
+    }
+
+    public Transaction(String itemId, String itemName, String sender, String recipient, String status, double amount, long timestamp, String categoryName, Item item, String senderDisplayName, String recipientDisplayName) {
+        this.itemId = itemId;
+        this.itemName = itemName;
+        this.sender = sender;
+        this.recipient = recipient;
+        this.status = status;
+        this.amount = amount;
+        this.timestamp = timestamp;
+        this.categoryName = categoryName;
+        this.item = item;
+        this.senderDisplayName = senderDisplayName;
+        this.recipientDisplayName = recipientDisplayName;
     }
 
     public String getKey() {
@@ -77,6 +98,22 @@ public class Transaction {
         this.recipient = recipient;
     }
 
+    public String getSenderDisplayName() {
+        return senderDisplayName;
+    }
+
+    public void setSenderDisplayName(String senderDisplayName) {
+        this.senderDisplayName = senderDisplayName;
+    }
+
+    public String getRecipientDisplayName() {
+        return recipientDisplayName;
+    }
+
+    public void setRecipientDisplayName(String recipientDisplayName) {
+        this.recipientDisplayName = recipientDisplayName;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -99,6 +136,14 @@ public class Transaction {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
     }
 
 

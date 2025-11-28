@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 
 import edu.uga.cs.tradeit.R;
+import edu.uga.cs.tradeit.objects.Item;
 import edu.uga.cs.tradeit.objects.Transaction;
 
 public class ItemBuyerRecyclerAdapter extends RecyclerView.Adapter<ItemBuyerRecyclerAdapter.ItemHolder> {
@@ -94,12 +95,12 @@ public class ItemBuyerRecyclerAdapter extends RecyclerView.Adapter<ItemBuyerRecy
             holder.transactionCreatedAtTextView.setText("Created: Unknown");
         }
 
-        // Display owner name if available, otherwise show owner key
-        String ownerDisplay = transaction.getRecipient();
+        // Display seller (owner) name - use display name with fallback to UID
+        String ownerDisplay = transaction.getSenderDisplayName();
         if (ownerDisplay == null || ownerDisplay.isEmpty()) {
-            ownerDisplay = transaction.getRecipient();
+            ownerDisplay = transaction.getSender();
         }
-        holder.transactionOwnerTextView.setText("Owner: " + (ownerDisplay != null ? ownerDisplay : "Unknown"));
+        holder.transactionOwnerTextView.setText("Seller: " + (ownerDisplay != null ? ownerDisplay : "Unknown"));
 
         holder.transactionStatusTextView.setText("Status: " + transaction.getStatus());
 
@@ -142,22 +143,29 @@ public class ItemBuyerRecyclerAdapter extends RecyclerView.Adapter<ItemBuyerRecy
                 .addOnSuccessListener(aVoid -> {
                     Log.d(DEBUG_TAG, "Transaction " + transaction.getKey() + " cancelled successfully.");
 
-                    // --- Part 2: Restore Item Availability ---
+                    // --- Part 2: Restore Item from stored data ---
+                    Item restoredItem = transaction.getItem();
+                    if (restoredItem == null) {
+                        Log.e(DEBUG_TAG, "Error: No item data stored in transaction. Cannot restore item.");
+                        Toast.makeText(context, "Request cancelled, but item data missing.", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
                     DatabaseReference itemRef = FirebaseDatabase.getInstance()
                             .getReference("categories")
                             .child(categoryName)
                             .child("items")
                             .child(itemId);
 
-                    // Update the status of the original item to "available"
-                    itemRef.child("status").setValue("available")
+                    // Restore the complete item with all original data
+                    itemRef.setValue(restoredItem)
                             .addOnSuccessListener(aVoid2 -> {
-                                Log.d(DEBUG_TAG, "Item " + itemId + " status restored to 'available'.");
+                                Log.d(DEBUG_TAG, "Item " + itemId + " fully restored to category.");
                                 Toast.makeText(context, "Request cancelled. Item is now back on the market.", Toast.LENGTH_LONG).show();
                             })
                             .addOnFailureListener(e -> {
-                                Log.e(DEBUG_TAG, "Error restoring item status: " + e.getMessage());
-                                Toast.makeText(context, "Request cancelled, but failed to restore item status.", Toast.LENGTH_LONG).show();
+                                Log.e(DEBUG_TAG, "Error restoring item: " + e.getMessage());
+                                Toast.makeText(context, "Request cancelled, but failed to restore item.", Toast.LENGTH_LONG).show();
                             });
                 })
                 .addOnFailureListener(e -> {

@@ -40,6 +40,7 @@ public class ItemHistoryRecyclerAdapter extends RecyclerView.Adapter<ItemHistory
         TextView transactionCategoryTextView;
         TextView transactionCreatedAtTextView;
         TextView transactionOwnerTextView;
+        TextView transactionBuyerTextView;
         TextView transactionStatusTextView;
 
         public ItemHolder(View view) {
@@ -50,6 +51,7 @@ public class ItemHistoryRecyclerAdapter extends RecyclerView.Adapter<ItemHistory
             transactionCategoryTextView = view.findViewById(R.id.itemCategoryTextView);
             transactionCreatedAtTextView = view.findViewById(R.id.itemCreatedAtTextView);
             transactionOwnerTextView = view.findViewById(R.id.itemOwnerTextView);
+            transactionBuyerTextView = view.findViewById(R.id.itemBuyerTextView);
             transactionStatusTextView = view.findViewById(R.id.statusTextView);
 
         }
@@ -86,12 +88,19 @@ public class ItemHistoryRecyclerAdapter extends RecyclerView.Adapter<ItemHistory
             holder.transactionCreatedAtTextView.setText("Created: Unknown");
         }
 
-        // Display owner name if available, otherwise show owner key
-        String ownerDisplay = transaction.getRecipient();
-        if (ownerDisplay == null || ownerDisplay.isEmpty()) {
-            ownerDisplay = transaction.getRecipient();
+        // Display seller name
+        String sellerDisplay = transaction.getSenderDisplayName();
+        if (sellerDisplay == null || sellerDisplay.isEmpty()) {
+            sellerDisplay = transaction.getSender();
         }
-        holder.transactionOwnerTextView.setText("Owner: " + (ownerDisplay != null ? ownerDisplay : "Unknown"));
+        holder.transactionOwnerTextView.setText("Seller: " + (sellerDisplay != null ? sellerDisplay : "Unknown"));
+
+        // Display buyer name
+        String buyerDisplay = transaction.getRecipientDisplayName();
+        if (buyerDisplay == null || buyerDisplay.isEmpty()) {
+            buyerDisplay = transaction.getRecipient();
+        }
+        holder.transactionBuyerTextView.setText("Buyer: " + (buyerDisplay != null ? buyerDisplay : "Unknown"));
 
         holder.transactionStatusTextView.setText("Status: " + transaction.getStatus());
     }

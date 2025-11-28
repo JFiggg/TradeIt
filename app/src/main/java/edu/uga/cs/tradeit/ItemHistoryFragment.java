@@ -145,7 +145,9 @@ public class ItemHistoryFragment extends Fragment {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e(DEBUG_TAG, "Error loading history query: " + databaseError.getMessage());
-                Toast.makeText(getContext(), "Error loading history data.", Toast.LENGTH_SHORT).show();
+                if (getContext() != null) {
+                    Toast.makeText(getContext(), "Error loading history data.", Toast.LENGTH_SHORT).show();
+                }
                 checkAndFinishLoading(); // Ensure we still try to finish if one query fails
             }
         });

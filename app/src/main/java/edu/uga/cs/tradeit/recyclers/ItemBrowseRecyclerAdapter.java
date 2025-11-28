@@ -95,7 +95,13 @@ public class ItemBrowseRecyclerAdapter extends RecyclerView.Adapter<ItemBrowseRe
         if (ownerDisplay == null || ownerDisplay.isEmpty()) {
             ownerDisplay = item.getOwnerKey();
         }
-        holder.itemOwnerTextView.setText("Owner: " + (ownerDisplay != null ? ownerDisplay : "Unknown"));
+        holder.itemOwnerTextView.setText("Seller: " + (ownerDisplay != null ? ownerDisplay : "Unknown"));
+
+        if (item.isFree()) {
+            holder.requestButton.setText("Request (free)");
+        } else {
+            holder.requestButton.setText("Request");
+        }
 
         // Check if current user owns the item and disable request button if so
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();

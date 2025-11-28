@@ -126,6 +126,7 @@ public class ItemDialogFragment extends DialogFragment {
             // Get free checkbox value
             boolean isFree = isFreeCheckBox.isChecked();
 
+
             // Get price based on whether item is free
             Double itemPrice = null;
             if (isFree) {
@@ -141,6 +142,11 @@ public class ItemDialogFragment extends DialogFragment {
                 } else {
                     itemPrice = 0.0;
                 }
+            }
+
+            if (itemPrice <= 0) {
+                isFree = true;
+                itemPrice = null;
             }
 
             // Get the listener from the parent fragment instead of activity
