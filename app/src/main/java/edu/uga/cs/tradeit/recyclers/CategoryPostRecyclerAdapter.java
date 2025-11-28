@@ -32,7 +32,7 @@ public class CategoryPostRecyclerAdapter extends RecyclerView.Adapter<CategoryPo
     private PostFragment parentFragment;
 
 
-    public CategoryPostRecyclerAdapter(List<Category> categoryList, Context context, PostFragment parentFragment ) {
+    public CategoryPostRecyclerAdapter(List<Category> categoryList, Context context, PostFragment parentFragment) {
         this.categoryList = categoryList;
         this.context = context;
         this.parentFragment = parentFragment;
@@ -60,30 +60,30 @@ public class CategoryPostRecyclerAdapter extends RecyclerView.Adapter<CategoryPo
             addItemButton = view.findViewById(R.id.addItemButton);
         }
     }
+
     @NonNull
     @Override
-    public CategoryHolder onCreateViewHolder(ViewGroup parent, int viewType ) {
-        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.category_post, parent, false );
-        return new CategoryHolder( view );
+    public CategoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_post, parent, false);
+        return new CategoryHolder(view);
     }
 
     // This method fills in the values of the Views to show a Category
     @Override
-    public void onBindViewHolder( CategoryHolder holder, int position ) {
-        Category category = categoryList.get( position );
+    public void onBindViewHolder(CategoryHolder holder, int position) {
+        Category category = categoryList.get(position);
 
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        if (category.getItems() != null) {
-            holder.categoryItemCountTextView.setText("Item Count: " + category.getItems().size());
-        }
+
+        holder.categoryItemCountTextView.setText("Item Count: " + category.getItemCount());
 
         String key = category.getKey();
         String name = category.getName();
         String ownerKey = category.getOwnerKey();
         long createdAt = category.getCreatedAt();
 
-        holder.categoryNameTextView.setText( category.getName());
+        holder.categoryNameTextView.setText(category.getName());
 
         // Set owner text
         if (ownerKey != null && !ownerKey.isEmpty()) {

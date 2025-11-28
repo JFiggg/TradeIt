@@ -38,6 +38,7 @@ public class CategoryBrowseRecyclerAdapter extends RecyclerView.Adapter<Category
         TextView categoryCreatedAtTextView;
         Button browseButton;
         TextView categoryItemCountTextView;
+
         public CategoryHolder(View view) {
             super(view);
 
@@ -51,26 +52,24 @@ public class CategoryBrowseRecyclerAdapter extends RecyclerView.Adapter<Category
 
     @NonNull
     @Override
-    public CategoryBrowseRecyclerAdapter.CategoryHolder onCreateViewHolder(ViewGroup parent, int viewType ) {
-        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.category_browse, parent, false );
-        return new CategoryBrowseRecyclerAdapter.CategoryHolder( view );
+    public CategoryBrowseRecyclerAdapter.CategoryHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_browse, parent, false);
+        return new CategoryBrowseRecyclerAdapter.CategoryHolder(view);
     }
 
     // This method fills in the values of the Views to show a Category
     @Override
-    public void onBindViewHolder(@NonNull CategoryHolder holder, int position ) {
-        Category category = categoryList.get( position );
+    public void onBindViewHolder(@NonNull CategoryHolder holder, int position) {
+        Category category = categoryList.get(position);
 
         String key = category.getKey();
         String name = category.getName();
         String ownerKey = category.getOwnerKey();
         long createdAt = category.getCreatedAt();
 
-        if (category.getItems() != null) {
-            holder.categoryItemCountTextView.setText("Item Count: " + category.getItems().size());
-        }
+        holder.categoryItemCountTextView.setText("Item Count: " + category.getItemCount());
 
-        holder.categoryNameTextView.setText( category.getName());
+        holder.categoryNameTextView.setText(category.getName());
 
         // Set owner text
         if (ownerKey != null && !ownerKey.isEmpty()) {

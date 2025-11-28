@@ -76,6 +76,15 @@ public class Category
         return items;
     }
 
+    public int getItemCount() {
+     if (this.getItems() != null  ) {
+         return this.getItems().size();
+     };
+
+     return 0;
+    }
+
+
     public void setItems(HashMap<String, Item> items) {
         this.items = items;
     }
