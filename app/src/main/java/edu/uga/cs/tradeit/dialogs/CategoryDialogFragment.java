@@ -21,7 +21,9 @@ public class CategoryDialogFragment extends DialogFragment {
 
     public interface AddCategoryDialogListener {
         void addCategory(Category category);
+
         void updateCategory(Category category);
+
         void deleteCategory(Category category);
     }
 
@@ -48,7 +50,7 @@ public class CategoryDialogFragment extends DialogFragment {
         }
 
         // Provide the negative button listener
-        builder.setNegativeButton( android.R.string.cancel, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int whichButton) {
                 // close the dialog
@@ -57,13 +59,13 @@ public class CategoryDialogFragment extends DialogFragment {
         });
 
         // Provide the positive button listener
-        builder.setPositiveButton( android.R.string.ok, new AddCategoryListener() );
+        builder.setPositiveButton(android.R.string.ok, new AddCategoryListener());
 
         // Create the AlertDialog and show it
         return builder.create();
     }
 
-    private class AddCategoryListener implements  DialogInterface.OnClickListener {
+    private class AddCategoryListener implements DialogInterface.OnClickListener {
 
         @Override
         public void onClick(DialogInterface dialog, int which) {

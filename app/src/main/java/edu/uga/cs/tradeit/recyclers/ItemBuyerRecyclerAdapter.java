@@ -28,9 +28,9 @@ import edu.uga.cs.tradeit.objects.Transaction;
 
 public class ItemBuyerRecyclerAdapter extends RecyclerView.Adapter<ItemBuyerRecyclerAdapter.ItemHolder> {
     private static final String DEBUG_TAG = "ItemBuyerRecyclerAdapter";
-    private List<Transaction> transactionList;
-    private Context context;
-    private Fragment parentFragment;
+    private final List<Transaction> transactionList;
+    private final Context context;
+    private final Fragment parentFragment;
 
     public ItemBuyerRecyclerAdapter(List<Transaction> transactionList, Context context, Fragment parentFragment) {
         this.transactionList = transactionList;
@@ -67,8 +67,8 @@ public class ItemBuyerRecyclerAdapter extends RecyclerView.Adapter<ItemBuyerRecy
     @NonNull
     @Override
     public ItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.item_buyer, parent, false );
-        return new ItemBuyerRecyclerAdapter.ItemHolder( view );
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_buyer, parent, false);
+        return new ItemBuyerRecyclerAdapter.ItemHolder(view);
     }
 
     @Override
@@ -81,10 +81,10 @@ public class ItemBuyerRecyclerAdapter extends RecyclerView.Adapter<ItemBuyerRecy
         if (transaction.getAmount() == 0.0) {
             holder.transactionPriceTextView.setText("Free");
         } else {
-            holder.transactionPriceTextView.setText("Price: $" + String.valueOf(transaction.getAmount()));
+            holder.transactionPriceTextView.setText("Price: $" + transaction.getAmount());
         }
 
-        holder.transactionCategoryTextView.setText( "Category: "+ transaction.getCategoryName());
+        holder.transactionCategoryTextView.setText("Category: " + transaction.getCategoryName());
 
         long createdAt = transaction.getTimestamp();
         if (createdAt > 0) {

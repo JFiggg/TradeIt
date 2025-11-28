@@ -31,6 +31,7 @@ public class ItemDialogFragment extends DialogFragment {
 
     public interface ItemDialogListener {
         void addItem(Item item);
+
         void updateItem(Item item);
     }
 
@@ -102,7 +103,7 @@ public class ItemDialogFragment extends DialogFragment {
         builder.setTitle(isEditMode ? "Edit item" : "Add item");
 
         // Provide the negative button listener
-        builder.setNegativeButton( android.R.string.cancel, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int whichButton) {
                 // close the dialog
@@ -111,13 +112,13 @@ public class ItemDialogFragment extends DialogFragment {
         });
 
         // Provide the positive button listener
-        builder.setPositiveButton( android.R.string.ok, new ItemDialogFragment.SaveItemListener() );
+        builder.setPositiveButton(android.R.string.ok, new ItemDialogFragment.SaveItemListener());
 
         // Create the AlertDialog and show it
         return builder.create();
     }
 
-    private class SaveItemListener implements  DialogInterface.OnClickListener {
+    private class SaveItemListener implements DialogInterface.OnClickListener {
 
         @Override
         public void onClick(DialogInterface dialog, int which) {

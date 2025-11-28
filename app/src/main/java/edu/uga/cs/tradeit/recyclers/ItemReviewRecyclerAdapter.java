@@ -14,8 +14,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -31,9 +29,9 @@ import edu.uga.cs.tradeit.objects.Item;
 public class ItemReviewRecyclerAdapter extends RecyclerView.Adapter<ItemReviewRecyclerAdapter.ItemHolder> {
 
     private static final String DEBUG_TAG = "ItemReviewAdapter";
-    private List<Item> itemList;
-    private Context context;
-    private Fragment parentFragment;
+    private final List<Item> itemList;
+    private final Context context;
+    private final Fragment parentFragment;
 
     public ItemReviewRecyclerAdapter(List<Item> itemList, Context context, Fragment parentFragment) {
         this.itemList = itemList;
@@ -53,6 +51,7 @@ public class ItemReviewRecyclerAdapter extends RecyclerView.Adapter<ItemReviewRe
 
         Button editButton;
         Button deleteButton;
+
         public ItemHolder(View view) {
             super(view);
 
@@ -70,8 +69,8 @@ public class ItemReviewRecyclerAdapter extends RecyclerView.Adapter<ItemReviewRe
     @NonNull
     @Override
     public ItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.item_review, parent, false );
-        return new ItemReviewRecyclerAdapter.ItemHolder( view );
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_review, parent, false);
+        return new ItemReviewRecyclerAdapter.ItemHolder(view);
     }
 
     @Override
@@ -84,10 +83,10 @@ public class ItemReviewRecyclerAdapter extends RecyclerView.Adapter<ItemReviewRe
         if (item.isFree()) {
             holder.itemPriceTextView.setText("Free");
         } else {
-            holder.itemPriceTextView.setText("Price: $" + String.valueOf(item.getPrice()));
+            holder.itemPriceTextView.setText("Price: $" + item.getPrice());
         }
 
-        holder.itemCategoryTextView.setText( "Category: "+ item.getCategoryName());
+        holder.itemCategoryTextView.setText("Category: " + item.getCategoryName());
 
         long createdAt = item.getCreatedAt();
         if (createdAt > 0) {

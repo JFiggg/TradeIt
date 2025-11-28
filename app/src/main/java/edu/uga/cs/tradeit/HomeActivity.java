@@ -49,7 +49,7 @@ public class HomeActivity extends AppCompatActivity {
         });
 
         mainViewPager = findViewById(R.id.mainViewPager);
-        mainViewPager.setAdapter( new MainVPAdapter(this) );
+        mainViewPager.setAdapter(new MainVPAdapter(this));
         mainViewPager.setCurrentItem(2, false);
         binding.bottomNavigationView.setSelectedItemId(R.id.profile);
 

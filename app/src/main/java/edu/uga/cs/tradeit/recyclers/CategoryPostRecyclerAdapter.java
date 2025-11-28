@@ -18,18 +18,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import edu.uga.cs.tradeit.dialogs.CategoryDialogFragment;
-import edu.uga.cs.tradeit.dialogs.ItemDialogFragment;
 import edu.uga.cs.tradeit.PostFragment;
 import edu.uga.cs.tradeit.R;
+import edu.uga.cs.tradeit.dialogs.CategoryDialogFragment;
+import edu.uga.cs.tradeit.dialogs.ItemDialogFragment;
 import edu.uga.cs.tradeit.objects.Category;
 
 public class CategoryPostRecyclerAdapter extends RecyclerView.Adapter<CategoryPostRecyclerAdapter.CategoryHolder> {
 
 
-    private List<Category> categoryList;
-    private Context context;
-    private PostFragment parentFragment;
+    private final List<Category> categoryList;
+    private final Context context;
+    private final PostFragment parentFragment;
 
 
     public CategoryPostRecyclerAdapter(List<Category> categoryList, Context context, PostFragment parentFragment) {

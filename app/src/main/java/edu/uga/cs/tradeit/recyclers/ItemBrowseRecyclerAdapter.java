@@ -24,9 +24,9 @@ import edu.uga.cs.tradeit.objects.Item;
 
 public class ItemBrowseRecyclerAdapter extends RecyclerView.Adapter<ItemBrowseRecyclerAdapter.ItemHolder> {
 
-    private List<Item> itemList;
-    private Context context;
-    private BrowseItemFragment parentFragment;
+    private final List<Item> itemList;
+    private final Context context;
+    private final BrowseItemFragment parentFragment;
 
 
     public ItemBrowseRecyclerAdapter(List<Item> itemList, Context context, BrowseItemFragment parentFragment) {
@@ -46,6 +46,7 @@ public class ItemBrowseRecyclerAdapter extends RecyclerView.Adapter<ItemBrowseRe
         TextView itemOwnerTextView;
 
         Button requestButton;
+
         public ItemHolder(View view) {
             super(view);
 
@@ -62,8 +63,8 @@ public class ItemBrowseRecyclerAdapter extends RecyclerView.Adapter<ItemBrowseRe
     @NonNull
     @Override
     public ItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.item_browse, parent, false );
-        return new ItemBrowseRecyclerAdapter.ItemHolder( view );
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_browse, parent, false);
+        return new ItemBrowseRecyclerAdapter.ItemHolder(view);
     }
 
     @Override
@@ -76,10 +77,10 @@ public class ItemBrowseRecyclerAdapter extends RecyclerView.Adapter<ItemBrowseRe
         if (item.isFree()) {
             holder.itemPriceTextView.setText("Free");
         } else {
-            holder.itemPriceTextView.setText("Price: $" +String.valueOf(item.getPrice()));
+            holder.itemPriceTextView.setText("Price: $" + item.getPrice());
         }
 
-        holder.itemCategoryTextView.setText( "Category: "+ item.getCategoryName());
+        holder.itemCategoryTextView.setText("Category: " + item.getCategoryName());
 
         long createdAt = item.getCreatedAt();
         if (createdAt > 0) {
@@ -106,10 +107,10 @@ public class ItemBrowseRecyclerAdapter extends RecyclerView.Adapter<ItemBrowseRe
         // Check if current user owns the item and disable request button if so
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null && item.getOwnerKey() != null && (currentUser.getUid().equals(item.getOwnerKey()))) {
-                // User owns this item - disable and grey out the button
-                holder.requestButton.setEnabled(false);
-                holder.requestButton.setAlpha(0.5f); // Make it visually greyed out
-                holder.requestButton.setOnClickListener(null); // Remove any click listener
+            // User owns this item - disable and grey out the button
+            holder.requestButton.setEnabled(false);
+            holder.requestButton.setAlpha(0.5f); // Make it visually greyed out
+            holder.requestButton.setOnClickListener(null); // Remove any click listener
 
         } else {
             // No user logged in or no owner set - enable button by default

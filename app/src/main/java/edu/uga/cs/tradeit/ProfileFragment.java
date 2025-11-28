@@ -17,7 +17,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import edu.uga.cs.tradeit.auth.AuthActivity;
-import edu.uga.cs.tradeit.auth.SignInFragment;
 
 /**
  * Simple placeholder screen to indicate the user is authenticated

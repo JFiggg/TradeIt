@@ -4,8 +4,7 @@ import com.google.firebase.database.Exclude;
 
 import java.util.HashMap;
 
-public class Category
-{
+public class Category {
     @Exclude  // Exclude from Firebase - key is derived from node key
     private String key;
 
@@ -78,11 +77,11 @@ public class Category
     }
 
     public int getItemCount() {
-     if (this.getItems() != null  ) {
-         return this.getItems().size();
-     };
+        if (this.getItems() != null) {
+            return this.getItems().size();
+        }
 
-     return 0;
+        return 0;
     }
 
 

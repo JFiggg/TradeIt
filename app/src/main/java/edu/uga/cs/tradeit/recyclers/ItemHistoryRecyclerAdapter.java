@@ -4,11 +4,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,9 +21,9 @@ import edu.uga.cs.tradeit.objects.Transaction;
 public class ItemHistoryRecyclerAdapter extends RecyclerView.Adapter<ItemHistoryRecyclerAdapter.ItemHolder> {
 
     private static final String DEBUG_TAG = "HistoryItemRecyclerAdapter";
-    private List<Transaction> transactionList;
-    private Context context;
-    private Fragment parentFragment;
+    private final List<Transaction> transactionList;
+    private final Context context;
+    private final Fragment parentFragment;
 
     public ItemHistoryRecyclerAdapter(List<Transaction> transactionList, Context context, Fragment parentFragment) {
         this.transactionList = transactionList;
@@ -60,8 +58,8 @@ public class ItemHistoryRecyclerAdapter extends RecyclerView.Adapter<ItemHistory
     @NonNull
     @Override
     public ItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.item_history, parent, false );
-        return new ItemHolder( view );
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_history, parent, false);
+        return new ItemHolder(view);
     }
 
     @Override
@@ -74,10 +72,10 @@ public class ItemHistoryRecyclerAdapter extends RecyclerView.Adapter<ItemHistory
         if (transaction.getAmount() == 0.0) {
             holder.transactionPriceTextView.setText("Free");
         } else {
-            holder.transactionPriceTextView.setText("Price: $" + String.valueOf(transaction.getAmount()));
+            holder.transactionPriceTextView.setText("Price: $" + transaction.getAmount());
         }
 
-        holder.transactionCategoryTextView.setText( "Category: "+ transaction.getCategoryName());
+        holder.transactionCategoryTextView.setText("Category: " + transaction.getCategoryName());
 
         long createdAt = transaction.getTimestamp();
         if (createdAt > 0) {

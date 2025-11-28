@@ -22,9 +22,9 @@ import edu.uga.cs.tradeit.R;
 import edu.uga.cs.tradeit.objects.Category;
 
 public class CategoryBrowseRecyclerAdapter extends RecyclerView.Adapter<CategoryBrowseRecyclerAdapter.CategoryHolder> {
-    private List<Category> categoryList;
-    private Context context;
-    private Fragment parentFragment;
+    private final List<Category> categoryList;
+    private final Context context;
+    private final Fragment parentFragment;
 
     public CategoryBrowseRecyclerAdapter(List<Category> categoryList, Context context, Fragment parentFragment) {
         this.categoryList = categoryList;

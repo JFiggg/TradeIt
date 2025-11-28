@@ -1,7 +1,5 @@
 package edu.uga.cs.tradeit.recyclers;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,15 +23,14 @@ import java.util.List;
 import java.util.Locale;
 
 import edu.uga.cs.tradeit.R;
-import edu.uga.cs.tradeit.dialogs.ItemDialogFragment;
 import edu.uga.cs.tradeit.objects.Item;
 import edu.uga.cs.tradeit.objects.Transaction;
 
 public class SellerItemRecyclerAdapter extends RecyclerView.Adapter<SellerItemRecyclerAdapter.ItemHolder> {
     private static final String DEBUG_TAG = "SellerItemRecyclerAdapter";
-    private List<Transaction> transactionList;
-    private Context context;
-    private Fragment parentFragment;
+    private final List<Transaction> transactionList;
+    private final Context context;
+    private final Fragment parentFragment;
 
     public SellerItemRecyclerAdapter(List<Transaction> transactionList, Context context, Fragment parentFragment) {
         this.transactionList = transactionList;
@@ -73,8 +70,8 @@ public class SellerItemRecyclerAdapter extends RecyclerView.Adapter<SellerItemRe
     @NonNull
     @Override
     public ItemHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from( parent.getContext()).inflate( R.layout.item_seller, parent, false );
-        return new SellerItemRecyclerAdapter.ItemHolder( view );
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_seller, parent, false);
+        return new SellerItemRecyclerAdapter.ItemHolder(view);
     }
 
     @Override
@@ -87,10 +84,10 @@ public class SellerItemRecyclerAdapter extends RecyclerView.Adapter<SellerItemRe
         if (transaction.getAmount() == 0.0) {
             holder.transactionPriceTextView.setText("Free");
         } else {
-            holder.transactionPriceTextView.setText("Price: $" + String.valueOf(transaction.getAmount()));
+            holder.transactionPriceTextView.setText("Price: $" + transaction.getAmount());
         }
 
-        holder.transactionCategoryTextView.setText( "Category: "+ transaction.getCategoryName());
+        holder.transactionCategoryTextView.setText("Category: " + transaction.getCategoryName());
 
         long createdAt = transaction.getTimestamp();
         if (createdAt > 0) {
@@ -194,8 +191,9 @@ public class SellerItemRecyclerAdapter extends RecyclerView.Adapter<SellerItemRe
 
     /**
      * Helper to restore the complete Item object from transaction data back to the categories node.
+     *
      * @param transaction The source transaction data containing the full item.
-     * @param ownerKey The UID of the transaction owner (seller) - not used anymore.
+     * @param ownerKey    The UID of the transaction owner (seller) - not used anymore.
      */
     private void restoreItem(Transaction transaction, String ownerKey) {
         // Get the complete item from transaction
