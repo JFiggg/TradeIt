@@ -144,7 +144,7 @@ public class ItemDialogFragment extends DialogFragment {
                 }
             }
 
-            if (itemPrice <= 0) {
+            if (itemPrice != null && itemPrice <= 0) {
                 isFree = true;
                 itemPrice = null;
             }

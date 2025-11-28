@@ -29,7 +29,7 @@ public class Item {
         this.isFree = isFree;
         this.categoryName = categoryName;
 
-        if (price <= 0) {
+        if (price != null && price <= 0) {
             isFree = true;
         }
 
