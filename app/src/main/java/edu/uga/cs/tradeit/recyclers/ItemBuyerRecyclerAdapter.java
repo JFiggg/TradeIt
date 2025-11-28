@@ -122,6 +122,10 @@ public class ItemBuyerRecyclerAdapter extends RecyclerView.Adapter<ItemBuyerRecy
         return transactionList.size();
     }
 
+    /**
+     * Buyer cancels their own request. DELETES the transaction entry and RECREATES the Item.
+     * This logic would be triggered by the ItemBuyerRecyclerAdapter.
+     */
     private void cancelRequest(Transaction transaction) {
 
         // 1. Validate mandatory fields needed for updating the item
@@ -134,16 +138,17 @@ public class ItemBuyerRecyclerAdapter extends RecyclerView.Adapter<ItemBuyerRecy
             return;
         }
 
-        // --- Part 1: Update Transaction Status ---
+        // 1. Get the reference to the transaction node
         DatabaseReference transactionRef = FirebaseDatabase.getInstance()
                 .getReference("transactions")
                 .child(transaction.getKey());
 
-        transactionRef.child("status").setValue("cancelled")
+        // 2. DELETE the transaction node entirely
+        transactionRef.removeValue()
                 .addOnSuccessListener(aVoid -> {
-                    Log.d(DEBUG_TAG, "Transaction " + transaction.getKey() + " cancelled successfully.");
+                    Log.d(DEBUG_TAG, "Transaction " + transaction.getKey() + " cancelled/deleted successfully.");
 
-                    // --- Part 2: Restore Item from stored data ---
+                    // 2. Restore Item from stored data
                     Item restoredItem = transaction.getItem();
                     if (restoredItem == null) {
                         Log.e(DEBUG_TAG, "Error: No item data stored in transaction. Cannot restore item.");
@@ -159,7 +164,7 @@ public class ItemBuyerRecyclerAdapter extends RecyclerView.Adapter<ItemBuyerRecy
 
                     // Restore the complete item with all original data
                     itemRef.setValue(restoredItem)
-                            .addOnSuccessListener(aVoid2 -> {
+                            .addOnSuccessListener(idk -> {
                                 Log.d(DEBUG_TAG, "Item " + itemId + " fully restored to category.");
                                 Toast.makeText(context, "Request cancelled. Item is now back on the market.", Toast.LENGTH_LONG).show();
                             })

@@ -114,7 +114,7 @@ public class ItemBuyerFragment extends Fragment {
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                         Log.e(DEBUG_TAG, "Error loading seller requests: " + databaseError.getMessage());
-                        if (getContext() != null) {
+                        if (isAdded()) {
                             Toast.makeText(getContext(), "Error loading requests.", Toast.LENGTH_SHORT).show();
                         }
                     }

@@ -1,5 +1,7 @@
 package edu.uga.cs.tradeit.recyclers;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -119,7 +121,7 @@ public class SellerItemRecyclerAdapter extends RecyclerView.Adapter<SellerItemRe
                     .setTitle("Decline Item")
                     .setMessage("Are you sure you want to decline the transaction \"" + transaction.getItemName() + "\"?")
                     .setPositiveButton("Decline", (dialog, which) -> {
-                        declineItem(transaction);
+                        declineRequest(transaction);
                     })
                     .setNegativeButton("Cancel", null)
                     .show();
@@ -156,34 +158,36 @@ public class SellerItemRecyclerAdapter extends RecyclerView.Adapter<SellerItemRe
      * categories node) upon the initial buy request.
      * * @param transaction The Transaction object associated with the pending request.
      */
-    private void declineItem(Transaction transaction) {
+    private void declineRequest(Transaction transaction) {
         // 1. Validate mandatory fields needed for restoration
         String categoryName = transaction.getCategoryName();
         String transactionId = transaction.getItemId();
         String transactionName = transaction.getItemName();
         String ownerKey = transaction.getRecipient(); // Assuming the recipient of the TX is the transaction owner (seller)
 
-        if (categoryName == null || transactionId == null || transactionName == null || ownerKey == null) {
+        if (transaction.getKey() == null || categoryName == null || transactionId == null || transactionName == null || ownerKey == null) {
             Log.e("DECLINE_TX", "Error: Missing critical fields in transaction data. Cannot restore transaction.");
             Toast.makeText(context, "Failed to decline: Transaction data incomplete.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // 2. Mark the transaction as cancelled in Firebase
+        // 1. Get the reference to the transaction node
         DatabaseReference transactionRef = FirebaseDatabase.getInstance()
                 .getReference("transactions")
                 .child(transaction.getKey());
 
-        transactionRef.child("status").setValue("cancelled")
+        // 2. DELETE the transaction node entirely
+        transactionRef.removeValue()
                 .addOnSuccessListener(aVoid -> {
-                    Log.d("DECLINE_TX", "Transaction " + transaction.getKey() + " cancelled successfully.");
-
-                    // 3. Proceed to recreate (restore) the Item
+                    Log.d(DEBUG_TAG, "Transaction " + transaction.getKey() + " cancelled/deleted successfully.");
                     restoreItem(transaction, ownerKey);
+                    transactionList.remove(transaction);
+                    notifyDataSetChanged();
+                    Toast.makeText(context, "Request cancelled. Item restored to market.", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("DECLINE_TX", "Failed to update transaction status: " + e.getMessage());
-                    Toast.makeText(context, "Failed to decline request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(DEBUG_TAG, "Failed to delete transaction: " + e.getMessage());
+                    Toast.makeText(context, "Failed to cancel request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
