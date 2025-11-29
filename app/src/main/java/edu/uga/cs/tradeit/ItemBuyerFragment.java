@@ -42,6 +42,8 @@ public class ItemBuyerFragment extends Fragment {
     private List<Transaction> transactionList;
     private FirebaseDatabase database;
 
+    private View emptyView;
+
     public static ItemBuyerFragment newInstance() {
         ItemBuyerFragment fragment = new ItemBuyerFragment();
         return fragment;
@@ -60,7 +62,7 @@ public class ItemBuyerFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.itemBuyerRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
+        emptyView = view.findViewById(R.id.emptyListView);
         transactionList = new ArrayList<>();
         adapter = new ItemBuyerRecyclerAdapter(transactionList, getContext(), this);
         recyclerView.setAdapter(adapter);
@@ -107,6 +109,18 @@ public class ItemBuyerFragment extends Fragment {
 
                         adapter.notifyDataSetChanged();
                         Log.d(DEBUG_TAG, "Pending requests count: " + transactionList.size());
+
+                        if (transactionList.isEmpty()) {
+                            // If list is empty show the fragment indicating we have no items
+                            android.widget.TextView emptyTextView = emptyView.findViewById(R.id.emptyListTextView);
+                            emptyTextView.setText("No pending bids found");
+
+                            recyclerView.setVisibility(View.GONE);
+                            emptyView.setVisibility(View.VISIBLE);
+                        } else {
+                            recyclerView.setVisibility(View.VISIBLE);
+                            emptyView.setVisibility(View.GONE);
+                        }
                     }
 
                     @Override

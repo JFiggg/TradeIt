@@ -33,6 +33,7 @@ public class BrowseItemFragment extends Fragment {
     private static final String ARG_CATEGORY_NAME = "category_name";
 
     private RecyclerView recyclerView;
+    private View emptyView;
     private ItemBrowseRecyclerAdapter adapter;
     private List<Item> itemList;
     private FirebaseDatabase database;
@@ -63,8 +64,8 @@ public class BrowseItemFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_browse_item, container, false);
 
         recyclerView = view.findViewById(R.id.itemsRecyclerView);
+        emptyView = view.findViewById(R.id.emptyListView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
         itemList = new ArrayList<>();
         adapter = new ItemBrowseRecyclerAdapter(itemList, getContext(), this);
         recyclerView.setAdapter(adapter);
@@ -98,6 +99,18 @@ public class BrowseItemFragment extends Fragment {
 
                 adapter.notifyDataSetChanged();
                 Log.d(DEBUG_TAG, "Item count: " + itemList.size());
+
+                if (itemList.isEmpty()) {
+                    // If list is empty show the fragment indicating we have no items
+                    android.widget.TextView emptyTextView = emptyView.findViewById(R.id.emptyListTextView);
+                    emptyTextView.setText("No items found for category: " + categoryName);
+
+                    recyclerView.setVisibility(View.GONE);
+                    emptyView.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.GONE);
+                }
             }
 
             @Override

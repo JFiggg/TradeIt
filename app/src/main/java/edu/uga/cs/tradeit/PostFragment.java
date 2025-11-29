@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 import edu.uga.cs.tradeit.dialogs.CategoryDialogFragment;
 import edu.uga.cs.tradeit.dialogs.ItemDialogFragment;
@@ -46,6 +47,8 @@ public class PostFragment extends Fragment implements CategoryDialogFragment.Add
     private Button addCategoryButton;
     private List<Category> categoryList;
 
+    private View emptyView;
+
     private FirebaseDatabase database;
 
     @Nullable
@@ -56,6 +59,7 @@ public class PostFragment extends Fragment implements CategoryDialogFragment.Add
 
         recyclerView = view.findViewById(R.id.categoriesRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        emptyView = view.findViewById(R.id.emptyListView);
 
         categoryList = new ArrayList<>();
         adapter = new CategoryPostRecyclerAdapter(categoryList, getContext(), this);
@@ -97,6 +101,18 @@ public class PostFragment extends Fragment implements CategoryDialogFragment.Add
 
                 adapter.notifyDataSetChanged();
                 Log.d(DEBUG_TAG, "Category count: " + categoryList.size());
+
+                if (categoryList.isEmpty()) {
+                    // If list is empty show the fragment indicating we have no items
+                    android.widget.TextView emptyTextView = emptyView.findViewById(R.id.emptyListTextView);
+                    emptyTextView.setText("No existing categories found" );
+
+                    recyclerView.setVisibility(View.GONE);
+                    emptyView.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.GONE);
+                }
             }
 
             @Override
@@ -122,6 +138,13 @@ public class PostFragment extends Fragment implements CategoryDialogFragment.Add
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             category.setOwnerKey(currentUser.getUid());
+
+            String displayName = currentUser.getDisplayName();
+            if (displayName != null && !displayName.isEmpty()) {
+                category.setOwnerName(displayName);
+            } else {
+                category.setOwnerName("Unknown");
+            }
         }
         category.setCreatedAt(System.currentTimeMillis());
 

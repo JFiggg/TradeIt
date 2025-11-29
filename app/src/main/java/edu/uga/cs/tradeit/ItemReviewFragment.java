@@ -39,6 +39,8 @@ public class ItemReviewFragment extends Fragment implements ItemDialogFragment.I
     private List<Item> itemList;
     private FirebaseDatabase database;
 
+    private View emptyView;
+
     public static ItemReviewFragment newInstance() {
         ItemReviewFragment fragment = new ItemReviewFragment();
         Bundle args = new Bundle();
@@ -59,7 +61,7 @@ public class ItemReviewFragment extends Fragment implements ItemDialogFragment.I
 
         recyclerView = view.findViewById(R.id.reviewItemsRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
+        emptyView = view.findViewById(R.id.emptyListView);
         itemList = new ArrayList<>();
         adapter = new ItemReviewRecyclerAdapter(itemList, getContext(), this);
         recyclerView.setAdapter(adapter);
@@ -111,6 +113,17 @@ public class ItemReviewFragment extends Fragment implements ItemDialogFragment.I
 
                 adapter.notifyDataSetChanged();
                 Log.d(DEBUG_TAG, "User's item count: " + itemList.size());
+
+                if (itemList.isEmpty()) {
+                    android.widget.TextView emptyTextView = emptyView.findViewById(R.id.emptyListTextView);
+                    emptyTextView.setText("You have not listed any items");
+
+                    recyclerView.setVisibility(View.GONE);
+                    emptyView.setVisibility(View.VISIBLE);
+                } else {
+                    recyclerView.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.GONE);
+                }
             }
 
             @Override

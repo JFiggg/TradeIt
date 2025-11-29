@@ -81,12 +81,15 @@ public class CategoryPostRecyclerAdapter extends RecyclerView.Adapter<CategoryPo
         String key = category.getKey();
         String name = category.getName();
         String ownerKey = category.getOwnerKey();
+        String ownerName = category.getOwnerName();
         long createdAt = category.getCreatedAt();
 
         holder.categoryNameTextView.setText(category.getName());
 
         // Set owner text
-        if (ownerKey != null && !ownerKey.isEmpty()) {
+        if (ownerName != null && !ownerName.isEmpty()) {
+            holder.categoryOwnerTextView.setText("Owner: " + ownerName);
+        } else if (ownerKey != null && !ownerKey.isEmpty()) {
             holder.categoryOwnerTextView.setText("Owner: " + ownerKey);
         } else {
             holder.categoryOwnerTextView.setText("Owner: Unknown");

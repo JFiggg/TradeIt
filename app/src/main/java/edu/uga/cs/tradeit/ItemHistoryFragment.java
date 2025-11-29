@@ -43,6 +43,8 @@ public class ItemHistoryFragment extends Fragment {
     private FirebaseDatabase database;
     private String currentUserId;
 
+    private View emptyView;
+
 
     // Counter to ensure we only update the UI after BOTH queries have completed
     private int queriesCompleted = 0;
@@ -66,6 +68,7 @@ public class ItemHistoryFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.itemHistoryRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        emptyView = view.findViewById(R.id.emptyListView);
 
         transactionList = new ArrayList<>();
         adapter = new ItemHistoryRecyclerAdapter(transactionList, getContext(), this);
@@ -172,6 +175,18 @@ public class ItemHistoryFragment extends Fragment {
             // Optional: Show a friendly message if the list is empty
             if (transactionList.isEmpty()) {
                 Toast.makeText(getContext(), "Your transaction history is currently empty.", Toast.LENGTH_LONG).show();
+            }
+
+            if (transactionList.isEmpty()) {
+                // transactionList list is empty show the fragment indicating we have no items
+                android.widget.TextView emptyTextView = emptyView.findViewById(R.id.emptyListTextView);
+                emptyTextView.setText("No history found");
+
+                recyclerView.setVisibility(View.GONE);
+                emptyView.setVisibility(View.VISIBLE);
+            } else {
+                recyclerView.setVisibility(View.VISIBLE);
+                emptyView.setVisibility(View.GONE);
             }
         }
     }

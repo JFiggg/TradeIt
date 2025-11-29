@@ -13,6 +13,8 @@ public class Category {
 
     private String ownerKey;
 
+    private String ownerName;
+
     private long createdAt;
 
     @Exclude // Firebase
@@ -32,11 +34,12 @@ public class Category {
         this.createdAt = 0;
     }
 
-    public Category(String name, String ownerKey, long createdAt) {
+    public Category(String name, String ownerKey, String ownerName, long createdAt) {
         this.key = null;
         this.name = name;
         this.ownerKey = ownerKey;
         this.createdAt = createdAt;
+        this.ownerName = ownerName;
     }
 
     public String getKey() {
@@ -62,6 +65,14 @@ public class Category {
 
     public void setOwnerKey(String ownerKey) {
         this.ownerKey = ownerKey;
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
     public long getCreatedAt() {
