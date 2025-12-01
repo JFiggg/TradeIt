@@ -20,6 +20,9 @@
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#FDD7B0"
+        app:itemIconTint="@color/nav_item_colors"
+        app:itemTextColor="@color/nav_item_colors"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,48 +33,48 @@
         android:id="@+id/fragmentOverlayContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:visibility="gone"
-        android:elevation="10dp"
         android:background="?android:attr/windowBackground"
-        app:layout_constraintTop_toTopOf="parent"
+        android:elevation="10dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <!-- Global back button for overlay fragments -->
     <LinearLayout
         android:id="@+id/overlayToolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="?android:attr/windowBackground"
+        android:elevation="11dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="8dp"
         android:visibility="gone"
-        android:elevation="11dp"
-        android:background="?android:attr/windowBackground"
-        android:gravity="center_vertical"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/overlayBackButton"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="?attr/homeAsUpIndicator"
-            android:contentDescription="Back"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="12dp" />
+            android:contentDescription="Back"
+            android:padding="12dp"
+            android:src="?attr/homeAsUpIndicator" />
 
         <TextView
             android:id="@+id/overlayTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:text=""
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp" />
+            android:textStyle="bold" />
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

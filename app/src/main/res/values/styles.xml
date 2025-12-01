@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ORANGE BUTTON -->
+    <style name="TradeItButton" parent="Widget.Material3.Button">
+        <item name="android:backgroundTint">@color/primary</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="android:padding">12dp</item>
+    </style>
+
+</resources>
