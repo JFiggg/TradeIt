@@ -1,0 +1,155 @@
+{
+  "categories": {
+    "Cats": {
+      "createdAt": 1764389636093,
+      "itemCount": 0,
+      "items": {
+        "-OfR6P_kgSpYF66LOWnb": {
+          "categoryName": "Cats",
+          "createdAt": 1764629521652,
+          "free": true,
+          "key": "-OfR6P_kgSpYF66LOWnb",
+          "name": "Mr Whiskers II",
+          "ownerKey": "PVYC6RcIigXbzq8YukgNjKzB4tj1",
+          "ownerName": "glorp",
+          "price": 0
+        }
+      },
+      "key": "Cats",
+      "name": "Cats",
+      "ownerKey": "aCVcauKIpOSulChEIjZXM4uFEof2",
+      "ownerName": "grimbo"
+    },
+    "Dogs": {
+      "createdAt": 1764389652888,
+      "itemCount": 0,
+      "items": {
+        "-OfRlRNNZ5glyHfK7zMP": {
+          "categoryName": "Dogs",
+          "createdAt": 1764640537101,
+          "free": false,
+          "key": "-OfRlRNNZ5glyHfK7zMP",
+          "name": "Chihuahua",
+          "ownerKey": "n72P10IOKVffly8bRziQrraHWv53",
+          "ownerName": "Jason",
+          "price": 300
+        }
+      },
+      "key": "Dogs",
+      "name": "Dogs",
+      "ownerKey": "aCVcauKIpOSulChEIjZXM4uFEof2",
+      "ownerName": "grimbo"
+    },
+    "Sofa": {
+      "createdAt": 1764606018121,
+      "itemCount": 0,
+      "items": {
+        "-OfRlcmWrxTWJr-ZPK-D": {
+          "categoryName": "Sofa",
+          "createdAt": 1764640587926,
+          "free": false,
+          "key": "-OfRlcmWrxTWJr-ZPK-D",
+          "name": "Red couch",
+          "ownerKey": "n72P10IOKVffly8bRziQrraHWv53",
+          "ownerName": "Jason",
+          "price": 20
+        },
+        "-OfRlefKQJgCXIrql6Jl": {
+          "categoryName": "Sofa",
+          "createdAt": 1764640596671,
+          "free": false,
+          "key": "-OfRlefKQJgCXIrql6Jl",
+          "name": "Old Couch",
+          "ownerKey": "V2iBP8el3UR2v88qN2OFfVlzTKl1",
+          "ownerName": "goobert",
+          "price": 15
+        },
+        "-OfRlg2vDBCUlrbEfmB2": {
+          "categoryName": "Sofa",
+          "createdAt": 1764640601327,
+          "free": true,
+          "key": "-OfRlg2vDBCUlrbEfmB2",
+          "name": "Yellow Couch",
+          "ownerKey": "n72P10IOKVffly8bRziQrraHWv53",
+          "ownerName": "Jason",
+          "price": 0
+        }
+      },
+      "key": "Sofa",
+      "name": "Sofa",
+      "ownerKey": "mylbeloXf1fmphrThIiC5Dd2MBv2",
+      "ownerName": "Lando"
+    }
+  },
+  "transactions": {
+    "-OfCq35ARCziPiHyHriU": {
+      "amount": 0,
+      "categoryName": "Cats",
+      "item": {
+        "categoryName": "Cats",
+        "createdAt": 1764390087977,
+        "free": true,
+        "key": "-OfCq2EJsRrDfuqP67P5",
+        "name": "Mr whiskers",
+        "ownerKey": "PVYC6RcIigXbzq8YukgNjKzB4tj1",
+        "ownerName": "glorp",
+        "price": 0
+      },
+      "itemId": "-OfCq2EJsRrDfuqP67P5",
+      "itemName": "Mr whiskers",
+      "key": "-OfCq35ARCziPiHyHriU",
+      "recipient": "aCVcauKIpOSulChEIjZXM4uFEof2",
+      "recipientDisplayName": "grimbo",
+      "sender": "PVYC6RcIigXbzq8YukgNjKzB4tj1",
+      "senderDisplayName": "glorp",
+      "status": "pending",
+      "timestamp": 1764390088454
+    },
+    "-OfCygY-oxpgHn_v6iNh": {
+      "amount": 20,
+      "categoryName": "Cats",
+      "item": {
+        "categoryName": "Cats",
+        "createdAt": 1764392275415,
+        "free": false,
+        "key": "-OfCyOW7epun59JtqOYh",
+        "name": "Gatito Meow",
+        "ownerKey": "n72P10IOKVffly8bRziQrraHWv53",
+        "ownerName": "Jason",
+        "price": 20
+      },
+      "itemId": "-OfCyOW7epun59JtqOYh",
+      "itemName": "Gatito Meow",
+      "key": "-OfCygY-oxpgHn_v6iNh",
+      "recipient": "TYCFBGJMBbWTD8CW7B41KNikwci1",
+      "recipientDisplayName": "User",
+      "sender": "n72P10IOKVffly8bRziQrraHWv53",
+      "senderDisplayName": "Jason",
+      "status": "accepted",
+      "timestamp": 1764392353321
+    },
+    "-OfPjonWbB8YZ4jJwJ8X": {
+      "amount": 0,
+      "categoryName": "Sofa",
+      "item": {
+        "categoryName": "Sofa",
+        "createdAt": 1764606062195,
+        "free": true,
+        "key": "-OfPhvgcTNME7JwPuYhY",
+        "name": "Brown couch",
+        "ownerKey": "mylbeloXf1fmphrThIiC5Dd2MBv2",
+        "ownerName": "Lando",
+        "price": 0
+      },
+      "itemId": "-OfPhvgcTNME7JwPuYhY",
+      "itemName": "Brown couch",
+      "key": "-OfPjonWbB8YZ4jJwJ8X",
+      "recipient": "n72P10IOKVffly8bRziQrraHWv53",
+      "recipientDisplayName": "Jason",
+      "sender": "mylbeloXf1fmphrThIiC5Dd2MBv2",
+      "senderDisplayName": "Lando",
+      "status": "accepted",
+      "timestamp": 1764606558252
+    }
+  }
+}

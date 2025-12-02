@@ -191,7 +191,7 @@ public class PostFragment extends Fragment implements CategoryDialogFragment.Add
                         // Same owner
                         category.setOwnerKey(oldCategory.getOwnerKey());
                         // Created at should remain unchanged
-                        category.setCreatedAt(oldCategory.getCreatedAt());
+                        category.setCreatedAt(System.currentTimeMillis());
 
                         // Update the category map with the new category
                         ref.child(newName).setValue(category)
